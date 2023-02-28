@@ -25,8 +25,8 @@ namespace ja {
     }
 
     shader::~shader() { glDeleteShader(m_handle); }
-
     bool shader::good() const { return m_good; }
+    GLuint shader::handle() const { return m_handle; }
 
     std::string shader::info_log() const {
         GLint len;
