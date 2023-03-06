@@ -1,16 +1,19 @@
-#ifndef JA_CHUNK_H
-#define JA_CHUNK_H
+#ifndef JA_CRAFT_CHUNK_H
+#define JA_CRAFT_CHUNK_H
 
 #include <glad/glad.h>
-#include <vector>
 
 namespace ja {
+
+    vertex_type
     class chunk {
-        static constexpr std::size_t width  = 16;
-        static constexpr std::size_t height = 16;
-        static constexpr std::size_t depth  = 16;
-    private:
-        std::vector<GLfloat> vertices;
+
+        GLuint m_vbo, m_ebo, m_vao;
+    };
+
+    template<typename vertex_type>
+    struct mesh {
+        vertex_type
     };
 }
 

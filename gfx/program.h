@@ -9,7 +9,7 @@ namespace ja {
     class program {
     public:
         program(const shader& vert, const shader& frag);
-        ~program();
+       ~program();
         program(const program& other) = delete;
         program& operator=(const program& other) = delete;
         void use() const;
