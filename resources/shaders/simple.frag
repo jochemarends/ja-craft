@@ -4,7 +4,7 @@ out vec4 color;
 
 in attribs_t {
     vec3 pos;
-    vec3 tex_pos;
+    vec2 tex_pos;
 } attribs;
 
 void main() {

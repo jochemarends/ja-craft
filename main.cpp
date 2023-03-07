@@ -2,9 +2,11 @@
 #include <GLFW/glfw3.h>
 #include "gfx/shader.h"
 #include "gfx/program.h"
-#include "world/camera.h"
 #include "world/cube_mesh.h"
+#include "world/camera.h"
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 
 constexpr std::size_t window_w = 800;
 constexpr std::size_t window_h = 600;
@@ -33,7 +35,7 @@ void handle_key_input(GLFWwindow* window) {
 
 void handle_mouse_input(GLFWwindow* window, double x, double y) {
     struct { double x, y; } static prev = {x, y};
-    constexpr float sensitivity = 0.1f;
+    constexpr float sensitivity = 0.1;
     float pitch = static_cast<float>(prev.y - y) * sensitivity;
     float yaw   = static_cast<float>(x - prev.x) * sensitivity;
     camera.rotate(pitch, yaw, 0.0f);
@@ -64,17 +66,14 @@ int main() try {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    // vertex buffer
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof ja::vertices, ja::vertices, GL_STATIC_DRAW);
 
-    // element buffer
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof ja::indices, ja::indices, GL_STATIC_DRAW);
 
-    // attribute buffer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<void*>(0));
     glEnableVertexAttribArray(0);
 
@@ -97,7 +96,6 @@ int main() try {
     }
 
     program.use();
-
 
     // game loop
     while (!glfwWindowShouldClose(window)) {
