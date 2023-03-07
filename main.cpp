@@ -5,8 +5,6 @@
 #include "world/cube_mesh.h"
 #include "world/camera.h"
 #include <iostream>
-#include <fstream>
-#include <filesystem>
 
 constexpr std::size_t window_w = 800;
 constexpr std::size_t window_h = 600;
