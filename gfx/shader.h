@@ -16,12 +16,11 @@ namespace ja {
         ~shader();
         shader(const shader& other) = delete;
         shader& operator=(const shader& other) = delete;
-        [[nodiscard]] GLuint handle();
+        [[nodiscard]] GLuint handle() const;
         [[nodiscard]] bool good() const;
         [[nodiscard]] std::string info_log() const;
     private:
         bool m_good;
-        bool m_file_not_found;
         GLuint m_handle;
     };
 }
