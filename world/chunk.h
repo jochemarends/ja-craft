@@ -72,10 +72,13 @@ namespace ja {
 
     class chunk::iterator {
     public:
-        
+        iterator(chunk& chunk, glm::uvec3 idx);
+        glm::vec3 position() const;
+        glm::uvec3 index() const;
+        ja::aabb aabb() const;
     private:
-        glm::vec<3, std::size_t> m_idx;
-        bool* m_data;
+        chunk& m_chunk;
+        glm::uvec3 m_idx;
     };
 }
 

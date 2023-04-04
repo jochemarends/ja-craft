@@ -45,3 +45,20 @@ ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
         .max{ 0.5 + i,  0.5 + j,  0.5 + k}
     };
 }
+
+ja::chunk::iterator::iterator(chunk& chunk, glm::uvec3 idx) : m_chunk{chunk}, m_idx{idx} {}
+
+glm::vec3 ja::chunk::iterator::position() const {
+    return m_idx;
+}
+
+glm::uvec3 ja::chunk::iterator::index() const {
+    return m_idx;
+}
+
+ja::aabb ja::chunk::iterator::aabb() const {
+    return ja::aabb{
+        .min{-0.5 + m_idx.x, -0.5 + m_idx.y, -0.5 + m_idx.z},
+        .max{ 0.5 + m_idx.x,  0.5 + m_idx.y,  0.5 + m_idx.z}
+    };
+}
