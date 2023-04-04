@@ -7,7 +7,7 @@ namespace ja {
         :m_near{near}, m_far{far}, m_aspect{aspect}, m_fov{45.0f},
          m_front    {0.0f,  0.0f,  -1.0f},
          m_up       {0.0f,  1.0f,   0.0f},
-         m_position {0.0f,  0.0f,   2.0f},
+         m_position {0.0f,  0.0f,   0.0f},
          m_rotation {0.0f, -90.0f,  0.0f} {}
 
     glm::mat4 camera::proj() const {

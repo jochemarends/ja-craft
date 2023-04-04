@@ -1,5 +1,47 @@
-//
-// Created by jocha on 27/02/2023.
-//
-
 #include "chunk.h"
+#include <algorithm>
+#include <functional>
+#include "mesh.h"
+
+void ja::chunk::generate() {
+    m_mesh.clear();
+
+    for (std::size_t i = 0; i < width; ++i) {
+        for (std::size_t j = 0; j < height; ++j) {
+            for (std::size_t k = 0; k < depth; ++k) {
+                if (m_data[i][j][k] == false) continue;
+
+                auto move_vertex = [offset = glm::vec3{i, j, k}](auto vertex) {
+                    vertex.position += offset;
+                    return vertex;
+                };
+
+                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+                m_mesh.add_vertices(std::span(front), move_vertex);
+
+                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+                m_mesh.add_vertices(std::span(back), move_vertex);
+
+                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+                m_mesh.add_vertices(std::span(left), move_vertex);
+
+                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+                m_mesh.add_vertices(std::span(right), move_vertex);
+
+                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+                m_mesh.add_vertices(std::span(top), move_vertex);
+
+                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+                m_mesh.add_vertices(std::span(bottom), move_vertex);
+            }
+        }
+    }
+    m_mesh.update_buffers();
+}
+
+ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
+    return ja::aabb{
+        .min{-0.5 + i, -0.5 + j, -0.5 + k},
+        .max{ 0.5 + i,  0.5 + j,  0.5 + k}
+    };
+}

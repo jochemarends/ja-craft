@@ -1,6 +1,7 @@
 #version 330 core
 
 out vec4 color;
+uniform sampler2D tex;
 
 in attribs_t {
     vec3 pos;
@@ -8,5 +9,5 @@ in attribs_t {
 } attribs;
 
 void main() {
-    color = vec4(0, 1, 1, 1);
+    color = texture(tex, attribs.tex_pos);
 }

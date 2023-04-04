@@ -1,39 +1,38 @@
 #ifndef JA_CUBE_MESH_H
 #define JA_CUBE_MESH_H
-
 #include <glad/glad.h>
 
 namespace ja {
-    const GLfloat vertices[] {
-        -0.5f, -0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f
-    };
-
-    const GLfloat positions[] {
-        -0.5f, -0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f
-    };
-
-    const GLuint indices[] {
-        0, 1, 2, 0, 2, 3, // back
-        4, 5, 6, 4, 6, 7, // front
-        0, 1, 5, 0, 5, 4, // left
-        3, 2, 6, 3, 6, 7, // right
-        1, 2, 6, 1, 6, 5, // up
-        0, 3, 7, 0, 7, 4  // down
-    };
+//    const GLfloat vertices[] {
+//        -0.5f, -0.5f, -0.5f,
+//        -0.5f,  0.5f, -0.5f,
+//         0.5f,  0.5f, -0.5f,
+//         0.5f, -0.5f, -0.5f,
+//        -0.5f, -0.5f,  0.5f,
+//        -0.5f,  0.5f,  0.5f,
+//         0.5f,  0.5f,  0.5f,
+//         0.5f, -0.5f,  0.5f
+//    };
+//
+//    const GLfloat positions[] {
+//        -0.5f, -0.5f, -0.5f,
+//        -0.5f,  0.5f, -0.5f,
+//         0.5f,  0.5f, -0.5f,
+//         0.5f, -0.5f, -0.5f,
+//        -0.5f, -0.5f,  0.5f,
+//        -0.5f,  0.5f,  0.5f,
+//         0.5f,  0.5f,  0.5f,
+//         0.5f, -0.5f,  0.5f
+//    };
+//
+//    const GLuint indices[] {
+//        0, 1, 2, 0, 2, 3, // back
+//        4, 5, 6, 4, 6, 7, // front
+//        0, 1, 5, 0, 5, 4, // left
+//        3, 2, 6, 3, 6, 7, // right
+//        1, 2, 6, 1, 6, 5, // up
+//        0, 3, 7, 0, 7, 4  // down
+//    };
 
     namespace face_mesh {
         constexpr std::size_t vertex_count = 4;
