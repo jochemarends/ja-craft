@@ -2,11 +2,12 @@
 #define JA_CRAFT_CHUNK_H
 
 #include <glad/glad.h>
-#include <vector>
 #include <map>
 #include <glm/gtc/type_ptr.hpp>
 #include "mesh.h"
 #include "aabb.h"
+#include <vector>
+#include <optional>
 
 namespace ja {
     inline static const vertex front[]{
@@ -56,8 +57,8 @@ namespace ja {
     };
 
     class chunk {
-        class iterator;
     public:
+        class iterator;
         static constexpr std::size_t width  = 16;
         static constexpr std::size_t height = 16;
         static constexpr std::size_t depth  = 16;
@@ -65,6 +66,7 @@ namespace ja {
         void generate();
         const mesh& mesh() const { return m_mesh; }
         ja::aabb aabb(std::size_t i, std::size_t j, std::size_t k) const;
+        std::optional<iterator> test(ja::ray ray) const;
         bool m_data[width][height][depth]{1};
     private:
         ja::mesh m_mesh;
@@ -72,12 +74,12 @@ namespace ja {
 
     class chunk::iterator {
     public:
-        iterator(chunk& chunk, glm::uvec3 idx);
+        iterator(const chunk& chunk, glm::uvec3 idx);
         glm::vec3 position() const;
         glm::uvec3 index() const;
         ja::aabb aabb() const;
     private:
-        chunk& m_chunk;
+        const chunk& m_chunk;
         glm::uvec3 m_idx;
     };
 }

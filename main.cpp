@@ -52,14 +52,23 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         ja::ray ray{camera.m_position, camera.m_front};
 
-        for (std::size_t i = 0; i < ja::chunk::width; ++i) {
-            for (std::size_t j = 0; j < ja::chunk::height; ++j) {
-                for (std::size_t k = 0; k < ja::chunk::depth; ++k) {
-                    ja::aabb aabb = pchunk->aabb(i, j, k);
-                    if (ja::test(ray, aabb)) pchunk->m_data[i][j][k] = !pchunk->m_data[i][j][k];
-                }
-            }
+
+        auto opt = pchunk->test(ray);
+
+        if (opt) {
+            std::cout << "TEST";
+           auto idx = opt->index();
+           pchunk->m_data[idx.x][idx.y][idx.z] = !pchunk->m_data[idx.x][idx.y][idx.z];
         }
+
+//        for (std::size_t i = 0; i < ja::chunk::width; ++i) {
+//            for (std::size_t j = 0; j < ja::chunk::height; ++j) {
+//                for (std::size_t k = 0; k < ja::chunk::depth; ++k) {
+//                    ja::aabb aabb = pchunk->aabb(i, j, k);
+//                    if (ja::test(ray, aabb)) pchunk->m_data[i][j][k] = !pchunk->m_data[i][j][k];
+//                }
+//            }
+//        }
         pchunk->generate();
     }
 }

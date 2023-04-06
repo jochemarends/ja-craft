@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <functional>
 #include "mesh.h"
+#include <iostream>
 
 void ja::chunk::generate() {
     m_mesh.clear();
@@ -39,6 +40,20 @@ void ja::chunk::generate() {
     m_mesh.update_buffers();
 }
 
+auto ja::chunk::test(ja::ray ray) const -> std::optional<iterator> {
+    for (std::size_t i = 0; i < width; ++i) {
+        for (std::size_t j = 0; j < height; ++j) {
+            for (std::size_t k = 0; k < depth; ++k) {
+                iterator it{*this, glm::uvec3{i, j, k}};
+                bool result = ja::test(ray, it.aabb());
+                std::cout << result << '\n';
+                if (result) return it;
+            }
+        }
+    }
+    return std::nullopt;
+}
+
 ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
     return ja::aabb{
         .min{-0.5 + i, -0.5 + j, -0.5 + k},
@@ -46,7 +61,7 @@ ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
     };
 }
 
-ja::chunk::iterator::iterator(chunk& chunk, glm::uvec3 idx) : m_chunk{chunk}, m_idx{idx} {}
+ja::chunk::iterator::iterator(const chunk& chunk, glm::uvec3 idx) : m_chunk{chunk}, m_idx{idx} {}
 
 glm::vec3 ja::chunk::iterator::position() const {
     return m_idx;
