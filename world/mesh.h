@@ -10,6 +10,10 @@
 #include <concepts>
 
 namespace ja {
+    enum class face {
+        front, back, left, right, top, bottom
+    };
+
     struct vertex {
         glm::vec3 position;
         glm::vec2 texcoord;

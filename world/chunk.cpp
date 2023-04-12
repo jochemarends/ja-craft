@@ -45,8 +45,8 @@ auto ja::chunk::test(ja::ray ray) const -> std::optional<iterator> {
         for (std::size_t j = 0; j < height; ++j) {
             for (std::size_t k = 0; k < depth; ++k) {
                 iterator it{*this, glm::uvec3{i, j, k}};
-                bool result = ja::test(ray, it.aabb());
-                std::cout << result << '\n';
+//                if (m_data[i][j][k] == false) continue;
+                auto result = ja::test(ray, it.aabb());
                 if (result) return it;
             }
         }
