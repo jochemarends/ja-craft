@@ -49,6 +49,20 @@ void handle_mouse_input(GLFWwindow* window, double x, double y) {
 }
 
 void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        ja::ray ray{camera.m_position, camera.m_front};
+        auto opt = pchunk->test(ray);
+        auto face = ja::test(ray, opt->aabb());
+        auto idx = opt->index();
+
+        glm::vec3 offset;
+        if (face == ja::face::back) {
+        std::cout << "aaa";
+            pchunk->m_data[idx.x][idx.y][idx.z+1] = !pchunk->m_data[idx.x][idx.y][idx.z+1];
+        }
+        pchunk->generate();
+    }
+
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         ja::ray ray{camera.m_position, camera.m_front};
 

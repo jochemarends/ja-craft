@@ -41,6 +41,7 @@ void ja::chunk::generate() {
 }
 
 auto ja::chunk::test(ja::ray ray) const -> std::optional<iterator> {
+
     for (std::size_t i = 0; i < width; ++i) {
         for (std::size_t j = 0; j < height; ++j) {
             for (std::size_t k = 0; k < depth; ++k) {
@@ -48,6 +49,8 @@ auto ja::chunk::test(ja::ray ray) const -> std::optional<iterator> {
 //                if (m_data[i][j][k] == false) continue;
                 auto result = ja::test(ray, it.aabb());
                 if (result) return it;
+//                std::optional<ja::face> = ja::test(ray, it.aabb());
+                cube::face::front
             }
         }
     }
