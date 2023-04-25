@@ -7,6 +7,7 @@
 #include "world/chunk.h"
 #include <iostream>
 #include "world/aabb.h"
+#include "util/indices.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -48,43 +49,73 @@ void handle_mouse_input(GLFWwindow* window, double x, double y) {
     prev = {x, y};
 }
 
-void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-        ja::ray ray{camera.m_position, camera.m_front};
-        auto opt = pchunk->test(ray);
-        auto face = ja::test(ray, opt->aabb());
-        auto idx = opt->index();
+using mouse_button_callback_type = std::function<void(GLFWwindow*, int, int, int)>;
+std::vector<mouse_button_callback_type> mouse_button_callbacks;
 
-        glm::vec3 offset;
-        if (face == ja::face::back) {
-        std::cout << "aaa";
-            pchunk->m_data[idx.x][idx.y][idx.z+1] = !pchunk->m_data[idx.x][idx.y][idx.z+1];
+void register_mouse_button_callback(mouse_button_callback_type callback) {
+    mouse_button_callbacks.push_back(callback);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    for (const auto& fn : mouse_button_callbacks) {
+        std::invoke(fn, window, button, action, mods);
+    }
+}
+
+using mouse_move_callback_type = std::function<void(GLFWwindow*, float, float)>;
+std::vector<mouse_move_callback_type> mouse_move_callbacks;
+
+void register_mouse_move_callback(mouse_move_callback_type callback) {
+    mouse_move_callbacks.push_back(callback);
+}
+
+void mouse_move_callback(GLFWwindow* window, double x, double y) {
+    for (const auto& fn : mouse_move_callbacks) {
+        std::invoke(fn, window, x, y);
+    }
+}
+
+
+void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
+    ja::chunk& chunk{*pchunk};
+    ja::ray ray{camera.m_position, camera.m_front};
+    auto result = chunk.test(ray);
+    if (!result) return;
+    auto [i, j, k] = result->first;
+    ja::face face = result->second;
+
+    if (action == GLFW_RELEASE) {
+        return;
+    };
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        switch (face) {
+            case ja::face::front:
+                ++k;
+                break;
+            case ja::face::back:
+                --k;
+                break;
+            case ja::face::left:
+                ++i;
+                break;
+            case ja::face::right:
+                --i;
+                break;
+            case ja::face::top:
+                ++j;
+                break;
+            case ja::face::bottom:
+                --j;
         }
-        pchunk->generate();
+        chunk.data()[i][j][k] = true;
     }
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        ja::ray ray{camera.m_position, camera.m_front};
-
-
-        auto opt = pchunk->test(ray);
-
-        if (opt) {
-            std::cout << "TEST";
-           auto idx = opt->index();
-           pchunk->m_data[idx.x][idx.y][idx.z] = !pchunk->m_data[idx.x][idx.y][idx.z];
-        }
-
-//        for (std::size_t i = 0; i < ja::chunk::width; ++i) {
-//            for (std::size_t j = 0; j < ja::chunk::height; ++j) {
-//                for (std::size_t k = 0; k < ja::chunk::depth; ++k) {
-//                    ja::aabb aabb = pchunk->aabb(i, j, k);
-//                    if (ja::test(ray, aabb)) pchunk->m_data[i][j][k] = !pchunk->m_data[i][j][k];
-//                }
-//            }
-//        }
-        pchunk->generate();
+        chunk.data()[i][j][k] = false;
     }
+
+    pchunk->generate();
 }
 
 int main() try {
@@ -143,11 +174,11 @@ int main() try {
 
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);
-    GLubyte* data = stbi_load("resources/textures/simple.jpg", &width, &height, &channels, 0);
+    GLubyte* data = stbi_load("resources/textures/wood.png", &width, &height, &channels, 0);
     if (data == nullptr) {
         throw std::runtime_error{"error: failed to load texture"};
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(data);
 
@@ -164,7 +195,6 @@ int main() try {
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));
         glUniformMatrix4fv(program.uniform_location("view"), 1, GL_FALSE, glm::value_ptr(camera.view()));
-
 
         chunk.mesh().draw();
 

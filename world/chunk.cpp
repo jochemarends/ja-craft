@@ -7,54 +7,76 @@
 void ja::chunk::generate() {
     m_mesh.clear();
 
-    for (std::size_t i = 0; i < width; ++i) {
-        for (std::size_t j = 0; j < height; ++j) {
-            for (std::size_t k = 0; k < depth; ++k) {
-                if (m_data[i][j][k] == false) continue;
+    for (auto [i, j, k] : indices_view{m_data}) {
+        if (m_data[i][j][k] == false) continue;
 
-                auto move_vertex = [offset = glm::vec3{i, j, k}](auto vertex) {
-                    vertex.position += offset;
-                    return vertex;
-                };
+        auto move_vertex = [offset = glm::vec3{i, j, k}](auto vertex) {
+            vertex.position += offset;
+            return vertex;
+        };
 
-                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-                m_mesh.add_vertices(std::span(front), move_vertex);
+        // front face
+        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+        m_mesh.add_vertices(std::span(front), move_vertex);
 
-                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-                m_mesh.add_vertices(std::span(back), move_vertex);
+        // back face
+        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+        m_mesh.add_vertices(std::span(back), move_vertex);
 
-                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-                m_mesh.add_vertices(std::span(left), move_vertex);
+        // left face
+        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+        m_mesh.add_vertices(std::span(left), move_vertex);
 
-                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-                m_mesh.add_vertices(std::span(right), move_vertex);
+        // right face
+        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+        m_mesh.add_vertices(std::span(right), move_vertex);
 
-                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-                m_mesh.add_vertices(std::span(top), move_vertex);
+        // top face
+        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+        m_mesh.add_vertices(std::span(top), move_vertex);
 
-                m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-                m_mesh.add_vertices(std::span(bottom), move_vertex);
-            }
-        }
+        // bottom face
+        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
+        m_mesh.add_vertices(std::span(bottom), move_vertex);
     }
+
     m_mesh.update_buffers();
 }
 
-auto ja::chunk::test(ja::ray ray) const -> std::optional<iterator> {
+auto ja::chunk::data() -> data_type& {
+    return m_data;
+}
 
-    for (std::size_t i = 0; i < width; ++i) {
-        for (std::size_t j = 0; j < height; ++j) {
-            for (std::size_t k = 0; k < depth; ++k) {
-                iterator it{*this, glm::uvec3{i, j, k}};
-//                if (m_data[i][j][k] == false) continue;
-                auto result = ja::test(ray, it.aabb());
-                if (result) return it;
-//                std::optional<ja::face> = ja::test(ray, it.aabb());
-                cube::face::front
-            }
+auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n<std::size_t, 3>::type, ja::face>> {
+    using index_type = tuple_of_n<std::size_t, 3>::type;
+    using result_type = std::optional<std::pair<index_type, face>>;
+
+    result_type min;
+
+    // TODO: cleanup this ugly lambda
+    auto pred = [&](auto i, auto j, auto k) {
+        if (!min) return true;
+        auto d1 = glm::distance(ray.origin, {i, j, k});
+        auto [l, m, n] = min->first;
+        auto d2 = glm::distance(ray.origin, {l, m, n});
+        return d1 < d2;
+    };
+
+    for (auto [i, j, k] : indices_view{m_data}) {
+        if (!m_data[i][j][k]) continue;
+
+        ja::aabb aabb{
+            .min{-0.5 + i, -0.5 + j, -0.5 + k},
+            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
+        };
+
+        auto hit_face = ja::test(ray, aabb);
+        if (hit_face && pred(i, j, k)) {
+            min = std::make_pair(std::make_tuple(i, j, k), *hit_face);
         }
     }
-    return std::nullopt;
+
+    return min;
 }
 
 ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {

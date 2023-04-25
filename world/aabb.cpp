@@ -35,8 +35,8 @@ std::optional<ja::face> ja::test(const ja::ray& ray, const ja::aabb& aabb) {
         };
 
         for (int i{0}; i < 3; ++i) {
-            if (t1s[i] == tmin) return faces[i].first;
-            if (t2s[i] == tmin) return faces[i].second;
+            if (t1s[i] == tmin) return faces[i].second;
+            if (t2s[i] == tmin) return faces[i].first;
         }
     }
 
