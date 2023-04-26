@@ -35,9 +35,40 @@ void handle_key_input(GLFWwindow* window) {
 
     // convert input to offset
     if (glm::length(input) != 0) {
-        glm::vec3 offset = glm::normalize(input)* player_speed * delta_time;
-        camera.move(offset);
+        glm::vec3 offset = glm::normalize(input) * player_speed * delta_time;
+
+        ja::aabb player_aabb{
+            .min{glm::vec3{-0.5, -0.5, -0.5} + camera.m_position},
+            .max{glm::vec3{ 0.5,  0.5,  0.5} + camera.m_position}
+        };
+
+
+        float res = 1.0f;
+        ja::chunk& chunk = *pchunk;
+        for (auto [i, j, k] : indices_view{chunk.data()}) {
+            if (!chunk.data()[i][j][k]) continue;
+
+            ja::aabb block_aabb{
+                .min{-0.5 + i, -0.5 + j, -0.5 + k},
+                .max{ 0.5 + i,  0.5 + j,  0.5 + k}
+            };
+
+            glm::vec3 d_position{0, 0, 0};
+            d_position += offset.x * glm::normalize(glm::cross(camera.m_up, camera.m_front));
+            d_position += offset.z * camera.m_front;
+            d_position += offset.y * camera.m_up;
+
+            res = ja::swept(player_aabb, block_aabb, d_position);
+            if (res != 1.0) {
+                std::cout << res << '\n';
+                break;
+            }
+        }
+
+        camera.move(offset * res);
+//        camera.m_position += (offset * res);
     }
+
 }
 
 void handle_mouse_input(GLFWwindow* window, double x, double y) {
@@ -187,6 +218,8 @@ int main() try {
     ja::chunk chunk;
     pchunk = &chunk;
     chunk.generate();
+
+    camera.m_position.z += 2.0f;
 
     // game loop
     while (!glfwWindowShouldClose(window)) {

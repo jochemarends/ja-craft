@@ -14,7 +14,6 @@ namespace ja {
         void rotate(float pitch, float yaw, float roll);
         glm::vec3 m_position;
         glm::vec3 m_front;
-    private:
         // position and orientation data
         glm::vec3 m_rotation;
         glm::vec3 m_up;
@@ -24,6 +23,7 @@ namespace ja {
         float m_far;
         float m_aspect;
         float m_fov;
+    private:
     };
 }
 
