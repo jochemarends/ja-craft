@@ -7,7 +7,7 @@
 #include "world/chunk.h"
 #include <iostream>
 #include "world/aabb.h"
-#include "util/indices.h"
+#include "util/indices_view.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

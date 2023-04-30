@@ -4,10 +4,10 @@ out vec4 color;
 uniform sampler2D tex;
 
 in attribs_t {
-    vec3 pos;
-    vec2 tex_pos;
+    vec3 position;
+    vec2 texcoord;
 } attribs;
 
 void main() {
-    color = texture(tex, attribs.tex_pos);
+    color = texture(tex, attribs.texcoord);
 }

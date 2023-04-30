@@ -8,7 +8,7 @@
 #include "aabb.h"
 #include <vector>
 #include <optional>
-#include "../util/indices.h"
+#include "../util/indices_view.h"
 
 namespace ja {
     inline static const vertex front[]{

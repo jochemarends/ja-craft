@@ -53,12 +53,15 @@ auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n<st
 
     result_type min;
 
-    // TODO: cleanup this ugly lambda
+    auto to_vec3 = [](const auto& tuple) {
+        auto& [i, j, k] = tuple;
+        return glm::vec3{i, j, k};
+    };
+
     auto pred = [&](auto i, auto j, auto k) {
         if (!min) return true;
-        auto d1 = glm::distance(ray.origin, {i, j, k});
-        auto [l, m, n] = min->first;
-        auto d2 = glm::distance(ray.origin, {l, m, n});
+        float d1 = glm::distance(ray.origin, {i, j, k});
+        float d2 = glm::distance(ray.origin, to_vec3(min->first));
         return d1 < d2;
     };
 

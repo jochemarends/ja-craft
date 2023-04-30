@@ -18,7 +18,6 @@ namespace ja {
 
     bool test(const ja::aabb& a, const ja::aabb& b);
     std::optional<ja::face> test(const ja::ray& ray, const ja::aabb& aabb);
-
     float swept(const ja::aabb& a, const ja::aabb& b, glm::vec3 velocity);
 }
 

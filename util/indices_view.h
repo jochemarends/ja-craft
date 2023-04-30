@@ -1,5 +1,5 @@
-#ifndef JA_CRAFT_INDICES_H
-#define JA_CRAFT_INDICES_H
+#ifndef JA_CRAFT_INDICES_VIEW_H
+#define JA_CRAFT_INDICES_VIEW_H
 
 #include <tuple>
 
