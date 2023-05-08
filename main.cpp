@@ -228,7 +228,6 @@ int main() try {
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));
         glUniformMatrix4fv(program.uniform_location("view"), 1, GL_FALSE, glm::value_ptr(camera.view()));
-
         chunk.mesh().draw();
 
         glfwSwapBuffers(window);

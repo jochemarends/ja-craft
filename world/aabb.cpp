@@ -98,8 +98,7 @@ namespace ja {
         float entry_time = std::max(entry_times.x, std::max(entry_times.y, entry_times.z));
         float exit_time = std::min(exit_times.x, std::min(exit_times.y, exit_times.z));
 
-        if (entry_time > exit_time || entry_times.x < 0.0f && entry_times.y < 0.0f && entry_times.z < 0.0f
-                || entry_times.x > 1.0f || entry_times.y > 1.0f || entry_times.z > 1.0f) {
+        if (entry_time > exit_time || entry_times.x < 0.0f && entry_times.y < 0.0f && entry_times.z < 0.0f || entry_times.x > 1.0f || entry_times.y > 1.0f || entry_times.z > 1.0f) {
             return 1.0f;
         }
 

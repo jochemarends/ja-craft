@@ -65,12 +65,14 @@ namespace ja {
         static constexpr std::size_t depth  = 16;
 
         void generate();
+        const glm::vec3& position() const { return m_position; }
         const mesh& mesh() const { return m_mesh; }
         ja::aabb aabb(std::size_t i, std::size_t j, std::size_t k) const;
         std::optional<std::pair<tuple_of_n<std::size_t, 3>::type, face>> test(ja::ray indices) const;
         using data_type = bool[width][height][depth];
         data_type& data();
         data_type m_data{1};
+        glm::vec3 m_position;
     private:
         ja::mesh m_mesh;
     };
