@@ -101,21 +101,19 @@ void handle_key_input(GLFWwindow* window) {
         float remaining_time = 1.0f - res.time;
 
         if (res.time != 1.0f) {
-            glm::vec3 a = res.normal;
-            std::cout << "vec3: (" << a.x << ',' << a.y << ',' << a.z << ")\n";
-            glm::vec3 b{};
+            glm::vec3 a = res.normal, b{};
 
             std::swap(a.x, a.y);
-            b += a *  glm::dot(a, d_position);
+            if (a != res.normal) b += a *  glm::dot(a, d_position);
             std::swap(a.x, a.y);
 
             std::swap(a.y, a.z);
-            b += a * glm::dot(a, d_position);
+            if (a != res.normal) b += a * glm::dot(a, d_position);
             std::swap(a.y, a.z);
 
             std::swap(a.x, a.z);
-            b -= a * glm::dot(a, d_position);
-            camera.move(b);
+            if (a != res.normal) b += a * glm::dot(a, d_position);
+            camera.m_position += b;
         }
 
 //        camera.m_position += (offset * res);
