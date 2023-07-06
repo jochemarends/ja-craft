@@ -7,6 +7,9 @@
 
 namespace ja {
     struct aabb {
+        float width() const;
+        float height() const;
+        float depth() const;
         glm::vec3 min;
         glm::vec3 max;
     };
@@ -16,9 +19,14 @@ namespace ja {
         glm::vec3 direction;
     };
 
+    struct swept_result {
+        float time;
+        glm::vec3 normal;
+    };
+
     bool test(const ja::aabb& a, const ja::aabb& b);
     std::optional<ja::face> test(const ja::ray& ray, const ja::aabb& aabb);
-    float swept(const ja::aabb& a, const ja::aabb& b, glm::vec3 velocity);
+    swept_result swept(const ja::aabb& a, const ja::aabb& b, glm::vec3 velocity);
 }
 
 #endif

@@ -12,6 +12,36 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+template<typename T>
+struct vec_interface {};
+
+template<typename T, std::size_t N>
+struct vec : vec_interface<vec<T, N>> {
+    T m_data[N];
+};
+
+template<typename T>
+struct vec<T, 2> : vec_interface<vec<T, 2>> {
+    union {
+        struct { T x, y; };
+        T m_data[2];
+    };
+};
+
+template<typename T>
+struct vec<T, 3> : vec_interface<vec<T, 3>> {
+    union {
+        struct { T x, y, z; };
+        T m_data[3];
+    };
+};
+
+template<typename T = float>
+using vec2 = vec<T, 2>;
+
+template<typename T = float>
+using vec3 = vec<T, 3>;
+
 ja::chunk* pchunk;
 
 constexpr std::size_t window_w = 800;
@@ -42,9 +72,12 @@ void handle_key_input(GLFWwindow* window) {
             .max{glm::vec3{ 0.5,  0.5,  0.5} + camera.m_position}
         };
 
-
-        float res = 1.0f;
+        ja::swept_result res{};
         ja::chunk& chunk = *pchunk;
+            glm::vec3 d_position{0, 0, 0};
+            d_position += offset.x * glm::normalize(glm::cross(camera.m_up, camera.m_front));
+            d_position += offset.z * camera.m_front;
+            d_position += offset.y * camera.m_up;
         for (auto [i, j, k] : indices_view{chunk.data()}) {
             if (!chunk.data()[i][j][k]) continue;
 
@@ -53,19 +86,38 @@ void handle_key_input(GLFWwindow* window) {
                 .max{ 0.5 + i,  0.5 + j,  0.5 + k}
             };
 
-            glm::vec3 d_position{0, 0, 0};
-            d_position += offset.x * glm::normalize(glm::cross(camera.m_up, camera.m_front));
-            d_position += offset.z * camera.m_front;
-            d_position += offset.y * camera.m_up;
 
             res = ja::swept(player_aabb, block_aabb, d_position);
-            if (res != 1.0) {
-                std::cout << res << '\n';
+            auto& [time, normal] = res;
+            float remaining_time = 1.0f - time;
+
+
+            if (time != 1.0) {
+                std::cout << time << '\n';
                 break;
             }
         }
+        camera.move(offset * res.time);
+        float remaining_time = 1.0f - res.time;
 
-        camera.move(offset * res);
+        if (res.time != 1.0f) {
+            glm::vec3 a = res.normal;
+            std::cout << "vec3: (" << a.x << ',' << a.y << ',' << a.z << ")\n";
+            glm::vec3 b{};
+
+            std::swap(a.x, a.y);
+            b += a *  glm::dot(a, d_position);
+            std::swap(a.x, a.y);
+
+            std::swap(a.y, a.z);
+            b += a * glm::dot(a, d_position);
+            std::swap(a.y, a.z);
+
+            std::swap(a.x, a.z);
+            b -= a * glm::dot(a, d_position);
+            camera.move(b);
+        }
+
 //        camera.m_position += (offset * res);
     }
 
