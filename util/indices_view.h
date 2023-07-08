@@ -119,4 +119,7 @@ void indices_view<T>::iterator::next(meta_size_t<0>) {
     ++std::get<0>(m_indices);
 }
 
+template<typename T>
+using indices_of = indices_view<T>;
+
 #endif

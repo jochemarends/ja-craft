@@ -74,10 +74,11 @@ void handle_key_input(GLFWwindow* window) {
 
         ja::swept_result res{};
         ja::chunk& chunk = *pchunk;
-            glm::vec3 d_position{0, 0, 0};
-            d_position += offset.x * glm::normalize(glm::cross(camera.m_up, camera.m_front));
-            d_position += offset.z * camera.m_front;
-            d_position += offset.y * camera.m_up;
+        glm::vec3 d_position{0, 0, 0};
+        d_position += offset.x * glm::normalize(glm::cross(camera.m_up, camera.m_front));
+        d_position += offset.z * camera.m_front;
+        d_position += offset.y * camera.m_up;
+
         for (auto [i, j, k] : indices_view{chunk.data()}) {
             if (!chunk.data()[i][j][k]) continue;
 
@@ -86,11 +87,9 @@ void handle_key_input(GLFWwindow* window) {
                 .max{ 0.5 + i,  0.5 + j,  0.5 + k}
             };
 
-
             res = ja::swept(player_aabb, block_aabb, d_position);
             auto& [time, normal] = res;
             float remaining_time = 1.0f - time;
-
 
             if (time != 1.0) {
                 std::cout << time << '\n';
@@ -99,6 +98,7 @@ void handle_key_input(GLFWwindow* window) {
         }
         camera.move(offset * res.time);
         float remaining_time = 1.0f - res.time;
+        camera.m_position += res.normal * 0.001f;
 
         if (res.time != 1.0f) {
             glm::vec3 a = res.normal, b{};
