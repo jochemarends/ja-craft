@@ -79,7 +79,7 @@ void handle_key_input(GLFWwindow* window) {
         d_position += offset.z * camera.m_front;
         d_position += offset.y * camera.m_up;
 
-        for (auto [i, j, k] : indices_view{chunk.data()}) {
+        for (auto [i, j, k] : indices_of(chunk.data())) {
             if (!chunk.data()[i][j][k]) continue;
 
             ja::aabb block_aabb{
@@ -97,23 +97,29 @@ void handle_key_input(GLFWwindow* window) {
             }
         }
         camera.move(offset * res.time);
-        float remaining_time = 1.0f - res.time;
         camera.m_position += res.normal * 0.001f;
-
+        
         if (res.time != 1.0f) {
             glm::vec3 a = res.normal, b{};
 
-            std::swap(a.x, a.y);
-            if (a != res.normal) b += a *  glm::dot(a, d_position);
-            std::swap(a.x, a.y);
+                std::swap(a.x, a.y);
+                if (a != res.normal) b += a * glm::dot(a, d_position);
+                std::swap(a.x, a.y);
 
-            std::swap(a.y, a.z);
-            if (a != res.normal) b += a * glm::dot(a, d_position);
-            std::swap(a.y, a.z);
+                std::swap(a.y, a.z);
+                if (a != res.normal) b += a * glm::dot(a, d_position);
+                std::swap(a.y, a.z);
 
-            std::swap(a.x, a.z);
-            if (a != res.normal) b += a * glm::dot(a, d_position);
-            camera.m_position += b;
+                std::swap(a.x, a.z);
+                if (a != res.normal) b += a * glm::dot(a, d_position);
+                std::swap(a.x, a.z);
+
+                for (int idx{}; idx < 2; ++idx) {
+
+                }
+
+                camera.m_position += b;
+
         }
 
 //        camera.m_position += (offset * res);

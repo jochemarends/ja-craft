@@ -120,6 +120,8 @@ void indices_view<T>::iterator::next(meta_size_t<0>) {
 }
 
 template<typename T>
-using indices_of = indices_view<T>;
+auto indices_of(const T& array) {
+    return indices_view{array};
+}
 
 #endif
