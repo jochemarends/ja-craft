@@ -261,8 +261,9 @@ int main() try {
 
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);
-    GLubyte* data = stbi_load("resources/textures/wood.png", &width, &height, &channels, 0);
+    GLubyte* data = stbi_load("resources/textures/atlas.png", &width, &height, &channels, 0);
     if (data == nullptr) {
+        throw std::runtime_error{stbi_failure_reason()};
         throw std::runtime_error{"error: failed to load texture"};
     }
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
