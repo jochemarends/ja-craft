@@ -1,2 +1,2 @@
 # ja-craft
-A simple minecraft like voxel game.
+A simple minecraft-like voxel game.
