@@ -10,19 +10,20 @@ ja::mesh::mesh() {
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-
     // create element buffer
     glGenBuffers(1, &m_ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
     // set attributes
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, position)));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, texcoord)));
-    glEnableVertexAttribArray(1);
+    if constexpr (has_position<vertex>) {
+        glVertexAttribPointer(0, count_of(decltype(vertex::position){}), GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, position)));
+        glEnableVertexAttribArray(0);
+    }
 
-
-//    update_buffers();
+    if constexpr (has_texcoord<vertex>) {
+        glVertexAttribPointer(1, count_of(decltype(vertex::position){}), GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, texcoord)));
+        glEnableVertexAttribArray(1);
+    }
 }
 
 ja::mesh::~mesh() {
@@ -37,13 +38,15 @@ void ja::mesh::clear() {
 }
 
 void ja::mesh::update_buffers() {
-    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(vertex), m_vertices.data(), GL_DYNAMIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), m_indices.data(), GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, m_vertices.size() * sizeof(vertex), m_vertices.data());
+    glBindVertexArray(m_vao);
 
+    // update the vertices
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(vertex), m_vertices.data(), GL_STATIC_DRAW);
+
+    // update the indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, m_indices.size() * sizeof(GLuint), m_indices.data());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), m_indices.data(), GL_STATIC_DRAW);
 }
 
 void ja::mesh::draw() const {

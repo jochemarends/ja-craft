@@ -6,11 +6,14 @@
 #include "world/camera.h"
 #include "world/chunk.h"
 #include <iostream>
+#include <fstream>
 #include "world/aabb.h"
 #include "util/indices_view.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "gfx/texture_atlas.h"
+#include "world/terrain.h"
 
 template<typename T>
 struct vec_interface {};
@@ -48,6 +51,7 @@ constexpr std::size_t window_w = 800;
 constexpr std::size_t window_h = 600;
 const std::string window_title = "ja-craft";
 ja::camera camera{0.1f, 100.0f, static_cast<float>(window_w) / window_h};
+ja::block selected_block = ja::block::dirt;
 
 void handle_key_input(GLFWwindow* window) {
     static float player_speed = 4.0f;
@@ -62,6 +66,12 @@ void handle_key_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) --input.z;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) ++input.x;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) --input.x;
+
+    for (int i = GLFW_KEY_1; i < GLFW_KEY_5; ++i) {
+        if (glfwGetKey(window, i) == GLFW_PRESS) {
+            selected_block = static_cast<ja::block>(i - GLFW_KEY_0 - 1);
+        }
+    }
 
     // convert input to offset
     if (glm::length(input) != 0) {
@@ -80,7 +90,7 @@ void handle_key_input(GLFWwindow* window) {
         d_position += offset.y * camera.m_up;
 
         for (auto [i, j, k] : indices_of(chunk.data())) {
-            if (!chunk.data()[i][j][k]) continue;
+            if (chunk.data()[i][j][k] == ja::block::empty) continue;
 
             ja::aabb block_aabb{
                 .min{-0.5 + i, -0.5 + j, -0.5 + k},
@@ -176,6 +186,8 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
     };
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        int col = chunk.m_data[i][j][k];
+
         switch (face) {
             case ja::face::front:
                 ++k;
@@ -195,11 +207,11 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
             case ja::face::bottom:
                 --j;
         }
-        chunk.data()[i][j][k] = true;
+        chunk.data()[i][j][k] = selected_block;
     }
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        chunk.data()[i][j][k] = false;
+        chunk.data()[i][j][k] = ja::empty;
     }
 
     pchunk->generate();
@@ -252,17 +264,19 @@ int main() try {
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
 
     // filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);
     GLubyte* data = stbi_load("resources/textures/atlas.png", &width, &height, &channels, 0);
     if (data == nullptr) {
+        std::ifstream ifs{"C:/dev/ja-craft/resources/textures/atlas.jpg"};
+        std::cout << std::boolalpha << ifs.good();
         throw std::runtime_error{stbi_failure_reason()};
         throw std::runtime_error{"error: failed to load texture"};
     }
@@ -272,9 +286,14 @@ int main() try {
 
     program.use();
 
+    glActiveTexture(GL_TEXTURE1);
+    texture_atlas atlas{"resources/textures/atlas.png", 2, 2};
+    glUniform1i(program.uniform_location("atlas"), 1);
+
     ja::chunk chunk;
     pchunk = &chunk;
     chunk.generate();
+    ja::terrain terrain;
 
     camera.m_position.z += 2.0f;
 
@@ -286,6 +305,8 @@ int main() try {
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));
         glUniformMatrix4fv(program.uniform_location("view"), 1, GL_FALSE, glm::value_ptr(camera.view()));
         chunk.mesh().draw();
+//        terrain.draw();
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();

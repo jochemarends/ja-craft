@@ -12,49 +12,53 @@
 
 namespace ja {
     inline static const vertex front[]{
-        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
-        {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f}},
-        {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}},
-        {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
     };
 
     inline static const vertex back[]{
-        {{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
-        {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}},
-        {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
-        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.0f}},
     };
 
     inline static const vertex left[]{
-        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
-        {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
-        {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}},
-        {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
     };
 
     inline static const vertex right[]{
-        {{0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
-        {{0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}},
-        {{0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
-        {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+        {{0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}},
+        {{0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.0f}},
     };
 
     inline static const vertex top[]{
-        {{-0.5f, 0.5f,  0.5f}, {0.0f, 0.0f}},
-        {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
-        {{ 0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
-        {{ 0.5f, 0.5f,  0.5f}, {1.0f, 0.0f}},
+        {{-0.5f, 0.5f,  0.5f}, {0.0f, 0.0f, 0.0f}},
+        {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{ 0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
+        {{ 0.5f, 0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
     };
 
     inline static const vertex bottom[]{
-        {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
-        {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},
-        {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}},
-        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 0.0f}},
     };
 
     inline static const GLuint indices[]{
         0, 1, 2, 0, 2, 3
+    };
+
+    enum block : std::uint8_t {
+        grass, dirt, brick, clay, empty
     };
 
     class chunk {
@@ -64,17 +68,18 @@ namespace ja {
         static constexpr std::size_t height = 16;
         static constexpr std::size_t depth  = 16;
 
+        chunk();
         void generate();
         const glm::vec3& position() const { return m_position; }
         const mesh& mesh() const { return m_mesh; }
         ja::aabb aabb(std::size_t i, std::size_t j, std::size_t k) const;
         std::optional<std::pair<tuple_of_n<std::size_t, 3>::type, face>> test(ja::ray indices) const;
-        using data_type = bool[width][height][depth];
+        using data_type = block[width][height][depth];
         data_type& data();
-        data_type m_data{1};
+        data_type m_data{block::grass};
         glm::vec3 m_position;
-    private:
         ja::mesh m_mesh;
+    private:
     };
 
     class chunk::iterator {

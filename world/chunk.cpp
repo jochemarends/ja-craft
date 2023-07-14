@@ -4,40 +4,49 @@
 #include "mesh.h"
 #include <iostream>
 
+namespace ja {
+    chunk::chunk() {
+        for (auto [i, j, k] : indices_of(m_data)) {
+            if (i == 0 && j == 0 && k == 0) continue;
+            m_data[i][j][k] = block::empty;
+        }
+    }
+}
 void ja::chunk::generate() {
     m_mesh.clear();
 
     for (auto [i, j, k] : indices_view{m_data}) {
-        if (m_data[i][j][k] == false) continue;
+        if (m_data[i][j][k] == block::empty) continue;
 
-        auto move_vertex = [offset = glm::vec3{i, j, k}](auto vertex) {
+        auto move_vertex = [&, this, offset = glm::vec3{i, j, k}](auto vertex) {
             vertex.position += offset;
+            vertex.texcoord.z = static_cast<float>(m_data[i][j][k]);
             return vertex;
         };
 
         // front face
-        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-        m_mesh.add_vertices(std::span(front), move_vertex);
+        m_mesh.add_indices(indices, m_mesh.vertices().size());
+        m_mesh.add_vertices(front, move_vertex);
 
         // back face
-        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-        m_mesh.add_vertices(std::span(back), move_vertex);
+        m_mesh.add_indices(indices, m_mesh.vertices().size());
+        m_mesh.add_vertices(back, move_vertex);
 
         // left face
-        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-        m_mesh.add_vertices(std::span(left), move_vertex);
+        m_mesh.add_indices(indices, m_mesh.vertices().size());
+        m_mesh.add_vertices(left, move_vertex);
 
         // right face
-        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-        m_mesh.add_vertices(std::span(right), move_vertex);
+        m_mesh.add_indices(indices, m_mesh.vertices().size());
+        m_mesh.add_vertices(right, move_vertex);
 
         // top face
-        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-        m_mesh.add_vertices(std::span(top), move_vertex);
+        m_mesh.add_indices(indices, m_mesh.vertices().size());
+        m_mesh.add_vertices(top, move_vertex);
 
         // bottom face
-        m_mesh.add_indices(std::span(indices), m_mesh.vertices().size());
-        m_mesh.add_vertices(std::span(bottom), move_vertex);
+        m_mesh.add_indices(indices, m_mesh.vertices().size());
+        m_mesh.add_vertices(bottom, move_vertex);
     }
 
     m_mesh.update_buffers();
@@ -66,7 +75,7 @@ auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n<st
     };
 
     for (auto [i, j, k] : indices_view{m_data}) {
-        if (!m_data[i][j][k]) continue;
+        if (m_data[i][j][k] == block::empty) continue;
 
         ja::aabb aabb{
             .min{-0.5 + i, -0.5 + j, -0.5 + k},

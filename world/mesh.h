@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <ranges>
 #include <concepts>
+#include <memory>
 
 namespace ja {
     enum class face {
@@ -16,8 +17,24 @@ namespace ja {
 
     struct vertex {
         glm::vec3 position;
-        glm::vec2 texcoord;
+        glm::vec3 texcoord;
     };
+
+
+    template<typename T>
+    concept has_position = requires {
+        &T::position;
+    };
+
+    template<typename T>
+    concept has_texcoord = requires {
+        &T::texcoord;
+    };
+
+    template<typename T, glm::length_t N, glm::qualifier Q>
+    consteval glm::length_t count_of(const glm::vec<N, T, Q>& vec) {
+        return N;
+    }
 
     class mesh {
     public:
@@ -26,13 +43,13 @@ namespace ja {
         mesh(const mesh&) = delete;
         mesh& operator=(const mesh&) = delete;
 
-        template<typename T, std::size_t N, typename Proj = std::identity>
-        requires std::same_as<typename std::remove_const<T>::type, vertex>
-        void add_vertices(std::span<T, N> vertices, Proj proj = {});
+        template<std::ranges::input_range R, typename Proj = std::identity>
+        requires std::same_as<std::ranges::range_value_t<R>, vertex>
+        void add_vertices(const R& vertices, Proj proj = {});
 
-        template<typename T, std::size_t N>
-        requires std::same_as<typename std::remove_const<T>::type, GLuint>
-        void add_indices(std::span<T, N> indices, GLuint offset = 0);
+        template<std::ranges::input_range R>
+        requires std::same_as<std::ranges::range_value_t<R>, GLuint>
+        void add_indices(const R& indices, GLuint offset = 0);
 
         void clear();
         void update_buffers();
@@ -46,15 +63,15 @@ namespace ja {
         GLuint m_vbo, m_ebo, m_vao;
     };
 
-    template<typename T, std::size_t N, typename Proj>
-    requires std::same_as<typename std::remove_const<T>::type, vertex>
-    void ja::mesh::add_vertices(std::span<T, N> vertices, Proj proj) {
+    template<std::ranges::input_range R, typename Proj>
+    requires std::same_as<std::ranges::range_value_t<R>, vertex>
+    void mesh::add_vertices(const R& vertices, Proj proj) {
         std::ranges::transform(vertices, std::back_inserter(m_vertices), proj);
     }
 
-    template<typename T, std::size_t N>
-    requires std::same_as<typename std::remove_const<T>::type, GLuint>
-    void ja::mesh::add_indices(std::span<T, N> indices, GLuint offset) {
+    template<std::ranges::input_range R>
+    requires std::same_as<std::ranges::range_value_t<R>, GLuint>
+    void mesh::add_indices(const R& indices, GLuint offset) {
         for (auto idx : indices) m_indices.push_back(idx + offset);
     }
 }
