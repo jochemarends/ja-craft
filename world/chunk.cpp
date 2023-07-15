@@ -20,7 +20,7 @@ void ja::chunk::generate() {
 
         auto move_vertex = [&, this, offset = glm::vec3{i, j, k}](auto vertex) {
             vertex.position += offset;
-            vertex.texcoord.z = static_cast<float>(m_data[i][j][k]);
+            vertex.texcoord.z = texture_indices[m_data[i][j][k]][0];
             return vertex;
         };
 
@@ -96,6 +96,10 @@ ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
         .min{-0.5 + i, -0.5 + j, -0.5 + k},
         .max{ 0.5 + i,  0.5 + j,  0.5 + k}
     };
+}
+
+glm::vec3 ja::chunk::pos(std::size_t i, std::size_t j, std::size_t k) const {
+    return {i, j, k};
 }
 
 ja::chunk::iterator::iterator(const chunk& chunk, glm::uvec3 idx) : m_chunk{chunk}, m_idx{idx} {}

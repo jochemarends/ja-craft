@@ -7,6 +7,8 @@
 #include "world/chunk.h"
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <ranges>
 #include "world/aabb.h"
 #include "util/indices_view.h"
 
@@ -14,6 +16,7 @@
 #include "stb_image.h"
 #include "gfx/texture_atlas.h"
 #include "world/terrain.h"
+
 
 template<typename T>
 struct vec_interface {};
@@ -53,6 +56,53 @@ const std::string window_title = "ja-craft";
 ja::camera camera{0.1f, 100.0f, static_cast<float>(window_w) / window_h};
 ja::block selected_block = ja::block::dirt;
 
+void move(ja::camera& camera, ja::chunk& chunk, glm::vec3 velocity) {
+    ja::aabb player_aabb{
+        .min{glm::vec3{-0.5, -0.5, -0.5} + camera.m_position},
+        .max{glm::vec3{ 0.5,  0.5,  0.5} + camera.m_position}
+    };
+
+    // 1. check for the nearest collision
+    ja::swept_result res{1.0f, {}};
+    float min_len = std::numeric_limits<float>::infinity();
+    for (auto [i, j, k] : indices_of(chunk.data())) {
+        if (chunk.data()[i][j][k] == ja::block::empty) continue;
+
+        auto new_res = ja::swept(player_aabb, chunk.aabb(i, j, k), velocity);
+        float new_len = glm::length(camera.m_position - chunk.pos(i, j, k));
+
+        if (new_res.time != 1.0 && new_len < min_len) {
+            min_len = new_len;
+            res = new_res;
+        }
+    }
+
+    // 2. apply velocity
+    camera.m_position += velocity * res.time;
+    camera.m_position += res.normal * 0.001f; // avoid getting stuck between blocks
+
+    if (res.time != 1.0f) {
+        auto remaining_time = 1.0f - res.time;
+        glm::vec3 a = res.normal, slide_velocity{};
+
+        // 3. calculate the slide velocity
+        std::swap(a.x, a.y);
+        if (a != res.normal) slide_velocity += a * glm::dot(a, velocity);
+        std::swap(a.x, a.y);
+
+        std::swap(a.y, a.z);
+        if (a != res.normal) slide_velocity += a * glm::dot(a, velocity);
+        std::swap(a.y, a.z);
+
+        std::swap(a.x, a.z);
+        if (a != res.normal) slide_velocity += a * glm::dot(a, velocity);
+        std::swap(a.x, a.z);
+
+        // 4. apply slide
+        move(camera, chunk, slide_velocity * remaining_time);
+    }
+}
+
 void handle_key_input(GLFWwindow* window) {
     static float player_speed = 4.0f;
     static double prev_time = glfwGetTime();
@@ -88,6 +138,9 @@ void handle_key_input(GLFWwindow* window) {
         d_position += offset.x * glm::normalize(glm::cross(camera.m_up, camera.m_front));
         d_position += offset.z * camera.m_front;
         d_position += offset.y * camera.m_up;
+
+        move(camera, chunk, d_position);
+        return;
 
         for (auto [i, j, k] : indices_of(chunk.data())) {
             if (chunk.data()[i][j][k] == ja::block::empty) continue;

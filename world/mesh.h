@@ -31,10 +31,7 @@ namespace ja {
         &T::texcoord;
     };
 
-    template<typename T, glm::length_t N, glm::qualifier Q>
-    consteval glm::length_t count_of(const glm::vec<N, T, Q>& vec) {
-        return N;
-    }
+
 
     class mesh {
     public:

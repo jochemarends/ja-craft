@@ -9,7 +9,10 @@ namespace ja {
     public:
         terrain();
         void draw() const;
-        chunk m_chunks[4][4];
+        const chunk& chunk_at(const glm::vec3& pos);
+        void update(const glm::vec3& pos);
+        glm::vec3 m_position;
+        chunk m_chunks[3][3];
     private:
     };
 

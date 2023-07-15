@@ -4,13 +4,12 @@
 namespace ja {
 
     terrain::terrain() {
-        for (auto [i, j] : indices_of(m_chunks)) {
-            for (auto k = 0; k < chunk::width; ++k) {
-            //std::ranges::fill(m_chunks[i][j].m_data[k][0], 1);
 
-            }
-            m_chunks[i][j].generate();
-        }
+    }
+
+    const chunk& terrain::chunk_at(const glm::vec3& position) {
+//        position
+
     }
 
     void terrain::draw() const {
