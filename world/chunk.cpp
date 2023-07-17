@@ -56,8 +56,8 @@ auto ja::chunk::data() -> data_type& {
     return m_data;
 }
 
-auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n<std::size_t, 3>::type, ja::face>> {
-    using index_type = tuple_of_n<std::size_t, 3>::type;
+auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, ja::face>> {
+    using index_type = tuple_of_n_impl<std::size_t, 3>::type;
     using result_type = std::optional<std::pair<index_type, face>>;
 
     result_type min;
@@ -69,19 +69,20 @@ auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n<st
 
     auto pred = [&](auto i, auto j, auto k) {
         if (!min) return true;
-        float d1 = glm::distance(ray.origin, {i, j, k});
-        float d2 = glm::distance(ray.origin, to_vec3(min->first));
+        float d1 = glm::distance(ray.origin, pos(i, j, k));
+        auto [x, y, z] = min->first;
+        float d2 = glm::distance(ray.origin, pos(x, y, z));
         return d1 < d2;
     };
 
     for (auto [i, j, k] : indices_view{m_data}) {
         if (m_data[i][j][k] == block::empty) continue;
 
-        ja::aabb aabb{
-            .min{-0.5 + i, -0.5 + j, -0.5 + k},
-            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
-        };
-
+//        ja::aabb aabb{
+//            .min{-0.5 + i, -0.5 + j, -0.5 + k},
+//            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
+//        };
+        ja::aabb aabb = this->aabb(i, j, k);
         auto hit_face = ja::test(ray, aabb);
         if (hit_face && pred(i, j, k)) {
             min = std::make_pair(std::make_tuple(i, j, k), *hit_face);
@@ -92,14 +93,27 @@ auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n<st
 }
 
 ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
-    return ja::aabb{
+    ja::aabb res{
         .min{-0.5 + i, -0.5 + j, -0.5 + k},
         .max{ 0.5 + i,  0.5 + j,  0.5 + k}
     };
+    res.min += m_position;
+    res.max += m_position;
+    return res;
+}
+
+ja::aabb ja::chunk::aabb() const {
+    ja::aabb res{
+        .min{-0.5f,                 -0.5f,        -0.5f},
+        .max{ width - 0.5f, height - 0.5f, depth - 0.5f}
+    };
+    res.min += m_position;
+    res.max += m_position;
+    return res;
 }
 
 glm::vec3 ja::chunk::pos(std::size_t i, std::size_t j, std::size_t k) const {
-    return {i, j, k};
+    return glm::vec3{i, j, k} + m_position;
 }
 
 ja::chunk::iterator::iterator(const chunk& chunk, glm::uvec3 idx) : m_chunk{chunk}, m_idx{idx} {}

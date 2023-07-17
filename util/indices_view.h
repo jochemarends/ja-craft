@@ -23,23 +23,26 @@ constexpr auto array_to_tuple(const std::array<T, N>& array) {
 }
 
 template<typename T, std::size_t N, typename... Ts>
-struct tuple_of_n;
+struct tuple_of_n_impl;
 
 template<typename T, typename... Ts>
-struct tuple_of_n<T, 0, Ts...> {
+struct tuple_of_n_impl<T, 0, Ts...> {
     using type = std::tuple<Ts...>;
 };
 
 template<typename T, std::size_t N, typename... Ts>
-struct tuple_of_n {
-    using type = tuple_of_n<T, N - 1, Ts..., T>::type;
+struct tuple_of_n_impl {
+    using type = tuple_of_n_impl<T, N - 1, Ts..., T>::type;
 };
+
+template<typename T, std::size_t N>
+using tuple_of_n = tuple_of_n_impl<T, N>::type;
 
 template<typename T>
 class indices_view {
 public:
     using size_type = std::size_t;
-    using index_type = tuple_of_n<std::size_t, std::rank<T>::value>::type;
+    using index_type = tuple_of_n_impl<std::size_t, std::rank<T>::value>::type;
     using value_type = std::remove_all_extents<T>::type;
     class iterator;
     indices_view(T& array);

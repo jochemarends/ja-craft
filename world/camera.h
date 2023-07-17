@@ -11,6 +11,7 @@ namespace ja {
         glm::mat4 proj() const;
         glm::mat4 view() const;
         void move(glm::vec3 offset);
+        void aarg(glm::vec3 offset);
         void rotate(float pitch, float yaw, float roll);
         glm::vec3 m_position;
         glm::vec3 m_front;

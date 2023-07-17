@@ -49,6 +49,7 @@ template<typename T = float>
 using vec3 = vec<T, 3>;
 
 ja::chunk* pchunk;
+ja::terrain* pterrain;
 
 constexpr std::size_t window_w = 800;
 constexpr std::size_t window_h = 600;
@@ -56,25 +57,32 @@ const std::string window_title = "ja-craft";
 ja::camera camera{0.1f, 100.0f, static_cast<float>(window_w) / window_h};
 ja::block selected_block = ja::block::dirt;
 
+
 void move(ja::camera& camera, ja::chunk& chunk, glm::vec3 velocity) {
     ja::aabb player_aabb{
-        .min{glm::vec3{-0.5, -0.5, -0.5} + camera.m_position},
-        .max{glm::vec3{ 0.5,  0.5,  0.5} + camera.m_position}
+        .min{glm::vec3{-0.4f, -0.4f, -0.4f} + camera.m_position},
+        .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + camera.m_position}
     };
 
     // 1. check for the nearest collision
     ja::swept_result res{1.0f, {}};
-    float min_len = std::numeric_limits<float>::infinity();
+    float s{};
     for (auto [i, j, k] : indices_of(chunk.data())) {
         if (chunk.data()[i][j][k] == ja::block::empty) continue;
 
         auto new_res = ja::swept(player_aabb, chunk.aabb(i, j, k), velocity);
-        float new_len = glm::length(camera.m_position - chunk.pos(i, j, k));
+        float new_s = glm::length(new_res.normal * velocity);
 
-        if (new_res.time != 1.0 && new_len < min_len) {
-            min_len = new_len;
+//        if (new_res.time <= res.time && new_s > s) {
+//            res = new_res;
+//            s = new_s;
+//        }
+
+        if (new_res.time < res.time) {
             res = new_res;
+            s = new_s;
         }
+
     }
 
     // 2. apply velocity
@@ -82,8 +90,10 @@ void move(ja::camera& camera, ja::chunk& chunk, glm::vec3 velocity) {
     camera.m_position += res.normal * 0.001f; // avoid getting stuck between blocks
 
     if (res.time != 1.0f) {
-        auto remaining_time = 1.0f - res.time;
         glm::vec3 a = res.normal, slide_velocity{};
+
+        auto remaining_time = 1.0f - res.time;
+        velocity *= remaining_time;
 
         // 3. calculate the slide velocity
         std::swap(a.x, a.y);
@@ -99,8 +109,12 @@ void move(ja::camera& camera, ja::chunk& chunk, glm::vec3 velocity) {
         std::swap(a.x, a.z);
 
         // 4. apply slide
-        move(camera, chunk, slide_velocity * remaining_time);
+        move(camera, chunk, slide_velocity);
     }
+}
+
+void move(ja::camera& camera, ja::terrain& terrain, glm::vec3 velocity) {
+    move(camera, terrain.chunk_at(camera.m_position), velocity);
 }
 
 void handle_key_input(GLFWwindow* window) {
@@ -139,55 +153,8 @@ void handle_key_input(GLFWwindow* window) {
         d_position += offset.z * camera.m_front;
         d_position += offset.y * camera.m_up;
 
-        move(camera, chunk, d_position);
-        return;
-
-        for (auto [i, j, k] : indices_of(chunk.data())) {
-            if (chunk.data()[i][j][k] == ja::block::empty) continue;
-
-            ja::aabb block_aabb{
-                .min{-0.5 + i, -0.5 + j, -0.5 + k},
-                .max{ 0.5 + i,  0.5 + j,  0.5 + k}
-            };
-
-            res = ja::swept(player_aabb, block_aabb, d_position);
-            auto& [time, normal] = res;
-            float remaining_time = 1.0f - time;
-
-            if (time != 1.0) {
-                std::cout << time << '\n';
-                break;
-            }
-        }
-        camera.move(offset * res.time);
-        camera.m_position += res.normal * 0.001f;
-        
-        if (res.time != 1.0f) {
-            glm::vec3 a = res.normal, b{};
-
-                std::swap(a.x, a.y);
-                if (a != res.normal) b += a * glm::dot(a, d_position);
-                std::swap(a.x, a.y);
-
-                std::swap(a.y, a.z);
-                if (a != res.normal) b += a * glm::dot(a, d_position);
-                std::swap(a.y, a.z);
-
-                std::swap(a.x, a.z);
-                if (a != res.normal) b += a * glm::dot(a, d_position);
-                std::swap(a.x, a.z);
-
-                for (int idx{}; idx < 2; ++idx) {
-
-                }
-
-                camera.m_position += b;
-
-        }
-
-//        camera.m_position += (offset * res);
+        move(camera, *pterrain, d_position);
     }
-
 }
 
 void handle_mouse_input(GLFWwindow* window, double x, double y) {
@@ -227,8 +194,12 @@ void mouse_move_callback(GLFWwindow* window, double x, double y) {
 
 
 void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
-    ja::chunk& chunk{*pchunk};
+    auto [x, y] = pterrain->pos_to_idx(camera.m_position);
+    ja::chunk& chunk = pterrain->m_chunks[x][y];
     ja::ray ray{camera.m_position, camera.m_front};
+
+    ja::terrain& t = *pterrain;
+
     auto result = chunk.test(ray);
     if (!result) return;
     auto [i, j, k] = result->first;
@@ -260,14 +231,15 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
             case ja::face::bottom:
                 --j;
         }
-        chunk.data()[i][j][k] = selected_block;
+
+            chunk.data()[i][j][k] = selected_block;
     }
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         chunk.data()[i][j][k] = ja::empty;
     }
 
-    pchunk->generate();
+    chunk.generate();
 }
 
 int main() try {
@@ -347,6 +319,7 @@ int main() try {
     pchunk = &chunk;
     chunk.generate();
     ja::terrain terrain;
+    pterrain = &terrain;
 
     camera.m_position.z += 2.0f;
 
@@ -354,12 +327,15 @@ int main() try {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        //terrain.center_to(camera.m_position);
+
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));
         glUniformMatrix4fv(program.uniform_location("view"), 1, GL_FALSE, glm::value_ptr(camera.view()));
-        chunk.mesh().draw();
-//        terrain.draw();
+        terrain.draw(program);
 
+        glm::mat4 model{1};
+        glUniformMatrix4fv(program.uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
 
         glfwSwapBuffers(window);
         glfwPollEvents();

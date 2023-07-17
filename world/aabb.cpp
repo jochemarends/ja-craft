@@ -101,20 +101,41 @@ namespace ja {
 
         if (entry_time.x == max_entry_time) {
             res.normal.x = (entry.x < 0.0f) ? 1.0f : -1.0f;
-            res.normal.y = res.normal.z = 0.0f;
+        }
+        else {
+            res.normal.x == 0.0f;
         }
 
         if (entry_time.y == max_entry_time) {
             res.normal.y = (entry.y < 0.0f) ? 1.0f : -1.0f;
-            res.normal.x = res.normal.z = 0.0f;
+        }
+        else {
+            res.normal.y = 0.0f;
         }
 
         if (entry_time.z == max_entry_time) {
-            std::cout << "entry.z: " << entry.z << '\n';
             res.normal.z = (entry.z < 0.0f) ? 1.0f : -1.0f;
-            res.normal.x = res.normal.y = 0.0f;
+        }
+        else {
+            res.normal.z = 0.0f;
         }
 
+//        if (entry_time.x == max_entry_time) {
+//            res.normal.x = (entry.x < 0.0f) ? 1.0f : -1.0f;
+//            res.normal.y = res.normal.z = 0.0f;
+//        }
+//
+//        if (entry_time.y == max_entry_time) {
+//            res.normal.y = (entry.y < 0.0f) ? 1.0f : -1.0f;
+//            res.normal.x = res.normal.z = 0.0f;
+//        }
+//
+//        if (entry_time.z == max_entry_time) {
+//            res.normal.z = (entry.z < 0.0f) ? 1.0f : -1.0f;
+//            res.normal.x = res.normal.y = 0.0f;
+//        }
+
+        res.normal = glm::normalize(res.normal);
         return res;
     }
 

@@ -64,10 +64,10 @@ namespace ja {
 
     // front, back, left, right, top, bottom
     inline static std::unordered_map<block, std::array<int, 6>> texture_indices{
-            {block::grass, {0, 1, 2, 3, 0, 1}},
-            {block::dirt,  {1, 1, 1, 1, 1, 1}},
-            {block::brick, {2, 2, 2, 2, 2, 2}},
-            {block::clay,  {3, 3, 3, 3, 3, 3}},
+        {block::grass, {0, 1, 2, 3, 0, 1}},
+        {block::dirt,  {1, 1, 1, 1, 1, 1}},
+        {block::brick, {2, 2, 2, 2, 2, 2}},
+        {block::clay,  {3, 3, 3, 3, 3, 3}},
     };
 
     class chunk {
@@ -81,8 +81,9 @@ namespace ja {
         const glm::vec3& position() const { return m_position; }
         const mesh& mesh() const { return m_mesh; }
         ja::aabb aabb(std::size_t i, std::size_t j, std::size_t k) const;
+        ja::aabb aabb() const;
         glm::vec3 pos(std::size_t i, std::size_t j, std::size_t k) const;
-        std::optional<std::pair<tuple_of_n<std::size_t, 3>::type, face>> test(ja::ray indices) const;
+        std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, face>> test(ja::ray indices) const;
         using data_type = block[width][height][depth];
         data_type& data();
         data_type m_data{block::grass};
