@@ -1,17 +1,42 @@
 #include <iostream>
 #include "terrain.h"
 #include "../gfx/program.h"
+#include "../PerlinNoise.h"
 
 namespace ja {
 
+    chunk(&terrain::chunks())[terrain::width][terrain::depth] {
+        return m_chunks;
+    }
+
+    const chunk(&terrain::chunks() const)[terrain::width][terrain::depth] {
+        return m_chunks;
+    }
+
+    void foo(ja::chunk& chunk, const siv::PerlinNoise& perlin) {
+        for (auto [i, j, k] : indices_of(chunk.data())) {
+            auto v = chunk.pos(i, j, k) * 0.1f;
+            if (perlin.noise2D_01(v.x, v.z) * chunk::height >= j) {
+                chunk.data()[i][j][k] = block::flag;
+            }
+        }
+        chunk.generate();
+    }
+
     terrain::terrain() {
+        const siv::PerlinNoise::seed_type seed = 123456u;
+        const siv::PerlinNoise perlin{ seed };
+
+
         for (auto [i, j] : indices_of(m_chunks)) {
             m_chunks[i][j].m_position = {i * 16, 0, j * 16};
-
+            foo(m_chunks[i][j], perlin);
+            continue;
             chunk& chunk = m_chunks[i][j];
             for (auto [i, j, k] : indices_of(chunk.data())) {
+
                 if (j == 0) {
-//                    chunk.data()[i][j][k] = block::dirt;
+                    chunk.data()[i][j][k] = block::dirt;
                 } else {
 //                    chunk.data()[i][j][k] = block::empty;
                 }
@@ -57,15 +82,23 @@ namespace ja {
     }
 
     void terrain::center_to(const glm::vec3& pos) {
-        auto set_pos = [](auto& chunk, int i, int j) {
-            chunk.m_position.x = i * chunk::width;
-            chunk.m_position.z = j * chunk::depth;
-        };
+        int x = pos.x / chunk::width;
+        int z = pos.z / chunk::depth;
 
-        auto [x, y] = new_pos_to_idx(pos);
-        for (auto [i, j] : indices_of(m_chunks)) {
-            set_pos(m_chunks[i][j], x - 1, y - 1);
+        if (std::abs(x - m_x) > 1 || std::abs(z - m_z) > 1) {
+            center_to(x, 0, z);
         }
+    }
+
+    void terrain::center_to(int i, int j, int k) {
+        for (auto [ii, jj] : indices_of(m_chunks)) {
+            auto x = (i + static_cast<int>(ii) - static_cast<int>(render_distance)) * static_cast<int>(chunk::width);
+            auto z = (j + static_cast<int>(jj) - static_cast<int>(render_distance)) * static_cast<int>(chunk::depth);
+            m_chunks[ii][jj].m_position = glm::vec3{x, 0.0f, z};
+        }
+        m_position = m_chunks[0][0].m_position;
+        m_x = i;
+        m_z = k;
     }
 
 }

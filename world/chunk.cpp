@@ -3,6 +3,7 @@
 #include <functional>
 #include "mesh.h"
 #include <iostream>
+#include <ranges>
 
 namespace ja {
     chunk::chunk() {
@@ -12,6 +13,16 @@ namespace ja {
         }
     }
 }
+
+template<int N>
+auto projection(const std::ranges::input_range auto& range, ja::chunk& chunk, int i, int j, int k) {
+    return std::views::transform(range, [&](auto vertex) {
+        vertex.position += glm::vec3{i, j, k};
+        vertex.texcoord.z = ja::texture_indices[chunk.m_data[i][j][k]][N];
+        return vertex;
+    });
+}
+
 void ja::chunk::generate() {
     m_mesh.clear();
 
@@ -24,73 +35,78 @@ void ja::chunk::generate() {
             return vertex;
         };
 
+
         // front face
         m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(front, move_vertex);
+        m_mesh.add_vertices(projection<0>(front, *this, i, j, k));
 
         // back face
         m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(back, move_vertex);
+        m_mesh.add_vertices(projection<1>(back, *this, i, j, k));
 
         // left face
         m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(left, move_vertex);
+        m_mesh.add_vertices(projection<2>(left, *this, i, j, k));
 
         // right face
         m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(right, move_vertex);
+        m_mesh.add_vertices(projection<3>(right, *this, i, j, k));
 
         // top face
         m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(top, move_vertex);
+        m_mesh.add_vertices(projection<4>(top, *this, i, j, k));
 
         // bottom face
         m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(bottom, move_vertex);
+        m_mesh.add_vertices(projection<5>(bottom, *this, i, j, k));
     }
 
     m_mesh.update_buffers();
+}
+
+auto ja::chunk::data() const -> const data_type& {
+    return m_data;
 }
 
 auto ja::chunk::data() -> data_type& {
     return m_data;
 }
 
-auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, ja::face>> {
-    using index_type = tuple_of_n_impl<std::size_t, 3>::type;
-    using result_type = std::optional<std::pair<index_type, face>>;
-
-    result_type min;
-
-    auto to_vec3 = [](const auto& tuple) {
-        auto& [i, j, k] = tuple;
-        return glm::vec3{i, j, k};
-    };
-
-    auto pred = [&](auto i, auto j, auto k) {
-        if (!min) return true;
-        float d1 = glm::distance(ray.origin, pos(i, j, k));
-        auto [x, y, z] = min->first;
-        float d2 = glm::distance(ray.origin, pos(x, y, z));
-        return d1 < d2;
-    };
-
-    for (auto [i, j, k] : indices_view{m_data}) {
-        if (m_data[i][j][k] == block::empty) continue;
-
-//        ja::aabb aabb{
-//            .min{-0.5 + i, -0.5 + j, -0.5 + k},
-//            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
-//        };
-        ja::aabb aabb = this->aabb(i, j, k);
-        auto hit_face = ja::test(ray, aabb);
-        if (hit_face && pred(i, j, k)) {
-            min = std::make_pair(std::make_tuple(i, j, k), *hit_face);
-        }
-    }
-
-    return min;
-}
+//auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, ja::face>> {
+//    using index_type = tuple_of_n_impl<std::size_t, 3>::type;
+//    using result_type = std::optional<std::pair<index_type, face>>;
+//
+//    result_type min;
+//
+//    auto to_vec3 = [](const auto& tuple) {
+//        auto& [i, j, k] = tuple;
+//        return glm::vec3{i, j, k};
+//    };
+//
+//    auto pred = [&](auto i, auto j, auto k) {
+//        if (!min) return true;
+//        float d1 = glm::distance(ray.origin, pos(i, j, k));
+//        auto [x, y, z] = min->first;
+//        float d2 = glm::distance(ray.origin, pos(x, y, z));
+//        return d1 < d2;
+//    };
+//
+//    for (auto [i, j, k] : indices_view{m_data}) {
+//        if (m_data[i][j][k] == block::empty) continue;
+//
+////        ja::aabb aabb{
+////            .min{-0.5 + i, -0.5 + j, -0.5 + k},
+////            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
+////        };
+//        ja::aabb aabb = this->aabb(i, j, k);
+//        auto hit_face = ja::test(ray, aabb);
+//        if (hit_face && pred(i, j, k)) {
+//            min = std::make_pair(std::make_tuple(i, j, k), *hit_face);
+//        }
+//    }
+//
+//    return min;
+//}
 
 ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
     ja::aabb res{

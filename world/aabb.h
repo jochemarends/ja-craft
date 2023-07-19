@@ -6,6 +6,7 @@
 #include "mesh.h"
 
 namespace ja {
+
     struct aabb {
         float width() const;
         float height() const;
@@ -14,19 +15,8 @@ namespace ja {
         glm::vec3 max;
     };
 
-    struct ray {
-        glm::vec3 origin;
-        glm::vec3 direction;
-    };
-
-    struct swept_result {
-        float time;
-        glm::vec3 normal;
-    };
-
     bool test(const ja::aabb& a, const ja::aabb& b);
-    std::optional<ja::face> test(const ja::ray& ray, const ja::aabb& aabb);
-    swept_result swept(const ja::aabb& a, const ja::aabb& b, glm::vec3 velocity);
+
 }
 
 #endif

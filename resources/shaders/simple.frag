@@ -11,5 +11,6 @@ in attribs_t {
 
 void main() {
     color = texture(atlas, attribs.texcoord);
+    if (color.a < 0.1) discard;
 //    color = texture(tex, attribs.texcoord);
 }

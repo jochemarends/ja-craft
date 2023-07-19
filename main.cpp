@@ -8,7 +8,9 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include "world/ray.h"
 #include <ranges>
+#include "world/swept.h"
 #include "world/aabb.h"
 #include "util/indices_view.h"
 
@@ -16,37 +18,6 @@
 #include "stb_image.h"
 #include "gfx/texture_atlas.h"
 #include "world/terrain.h"
-
-
-template<typename T>
-struct vec_interface {};
-
-template<typename T, std::size_t N>
-struct vec : vec_interface<vec<T, N>> {
-    T m_data[N];
-};
-
-template<typename T>
-struct vec<T, 2> : vec_interface<vec<T, 2>> {
-    union {
-        struct { T x, y; };
-        T m_data[2];
-    };
-};
-
-template<typename T>
-struct vec<T, 3> : vec_interface<vec<T, 3>> {
-    union {
-        struct { T x, y, z; };
-        T m_data[3];
-    };
-};
-
-template<typename T = float>
-using vec2 = vec<T, 2>;
-
-template<typename T = float>
-using vec3 = vec<T, 3>;
 
 ja::chunk* pchunk;
 ja::terrain* pterrain;
@@ -57,33 +28,13 @@ const std::string window_title = "ja-craft";
 ja::camera camera{0.1f, 100.0f, static_cast<float>(window_w) / window_h};
 ja::block selected_block = ja::block::dirt;
 
+std::ostream& operator<<(std::ostream& os, glm::vec3 vec) {
+    return os << '(' << vec.x << ',' << vec.y << ',' << vec.z << ')';
+}
 
-void move(ja::camera& camera, ja::chunk& chunk, glm::vec3 velocity) {
-    ja::aabb player_aabb{
-        .min{glm::vec3{-0.4f, -0.4f, -0.4f} + camera.m_position},
-        .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + camera.m_position}
-    };
-
+void move(ja::camera& camera, const ja::chunk& chunk, glm::vec3 velocity) {
     // 1. check for the nearest collision
-    ja::swept_result res{1.0f, {}};
-    float s{};
-    for (auto [i, j, k] : indices_of(chunk.data())) {
-        if (chunk.data()[i][j][k] == ja::block::empty) continue;
-
-        auto new_res = ja::swept(player_aabb, chunk.aabb(i, j, k), velocity);
-        float new_s = glm::length(new_res.normal * velocity);
-
-//        if (new_res.time <= res.time && new_s > s) {
-//            res = new_res;
-//            s = new_s;
-//        }
-
-        if (new_res.time < res.time) {
-            res = new_res;
-            s = new_s;
-        }
-
-    }
+    auto res = ja::swept(camera.aabb(), chunk, velocity);
 
     // 2. apply velocity
     camera.m_position += velocity * res.time;
@@ -114,6 +65,11 @@ void move(ja::camera& camera, ja::chunk& chunk, glm::vec3 velocity) {
 }
 
 void move(ja::camera& camera, ja::terrain& terrain, glm::vec3 velocity) {
+    ja::aabb player_aabb{
+        .min{glm::vec3{-0.4f, -0.4f, -0.4f} + camera.m_position},
+        .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + camera.m_position}
+    };
+
     move(camera, terrain.chunk_at(camera.m_position), velocity);
 }
 
@@ -131,7 +87,7 @@ void handle_key_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) ++input.x;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) --input.x;
 
-    for (int i = GLFW_KEY_1; i < GLFW_KEY_5; ++i) {
+    for (int i = GLFW_KEY_1; i < GLFW_KEY_7; ++i) {
         if (glfwGetKey(window, i) == GLFW_PRESS) {
             selected_block = static_cast<ja::block>(i - GLFW_KEY_0 - 1);
         }
@@ -200,10 +156,12 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
 
     ja::terrain& t = *pterrain;
 
-    auto result = chunk.test(ray);
+    auto result =  ja::test(ray, chunk);
+//    auto result = ja::test(ray, *pterrain);
+//    ja::chunk& chunk = result->chunk;
     if (!result) return;
-    auto [i, j, k] = result->first;
-    ja::face face = result->second;
+    auto [i, j, k] = result->index;
+    ja::face face = result->face;
 
     if (action == GLFW_RELEASE) {
         return;
@@ -312,7 +270,7 @@ int main() try {
     program.use();
 
     glActiveTexture(GL_TEXTURE1);
-    texture_atlas atlas{"resources/textures/atlas.png", 2, 2};
+    texture_atlas atlas{"resources/textures/atlas.png", 5, 5};
     glUniform1i(program.uniform_location("atlas"), 1);
 
     ja::chunk chunk;
@@ -320,6 +278,7 @@ int main() try {
     chunk.generate();
     ja::terrain terrain;
     pterrain = &terrain;
+    terrain.center_to(0, 0, 0);
 
     camera.m_position.z += 2.0f;
 
@@ -327,7 +286,7 @@ int main() try {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //terrain.center_to(camera.m_position);
+        terrain.center_to(camera.m_position);
 
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));

@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
+#include "aabb.h"
 
 namespace ja {
     class camera {
@@ -13,6 +14,14 @@ namespace ja {
         void move(glm::vec3 offset);
         void aarg(glm::vec3 offset);
         void rotate(float pitch, float yaw, float roll);
+
+        ja::aabb aabb() const {
+            return ja::aabb{
+                .min{glm::vec3{-0.4f, -0.4f, -0.4f} + m_position},
+                .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + m_position}
+            };
+        }
+
         glm::vec3 m_position;
         glm::vec3 m_front;
         // position and orientation data

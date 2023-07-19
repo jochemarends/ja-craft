@@ -5,10 +5,10 @@
 #include <map>
 #include <glm/gtc/type_ptr.hpp>
 #include "mesh.h"
-#include "aabb.h"
 #include <vector>
 #include <optional>
 #include <unordered_map>
+#include "aabb.h"
 #include "../util/indices_view.h"
 
 namespace ja {
@@ -59,16 +59,19 @@ namespace ja {
     };
 
     enum block : std::uint8_t {
-        grass, dirt, brick, clay, empty
+        grass, dirt, clay, brick, glass, flag, empty
     };
 
     // front, back, left, right, top, bottom
     inline static std::unordered_map<block, std::array<int, 6>> texture_indices{
-        {block::grass, {0, 1, 2, 3, 0, 1}},
+        {block::grass, {0, 0, 0, 0, 0, 0}},
         {block::dirt,  {1, 1, 1, 1, 1, 1}},
-        {block::brick, {2, 2, 2, 2, 2, 2}},
-        {block::clay,  {3, 3, 3, 3, 3, 3}},
+        {block::brick, {6, 6, 6, 6, 6, 6}},
+        {block::clay,  {5, 5, 5, 5, 5, 5}},
+        {block::glass, {10, 10, 10, 10, 10, 10}},
+        {block::flag,  {11, 11, 11, 11, 15, 16}}
     };
+
 
     class chunk {
     public:
@@ -83,9 +86,10 @@ namespace ja {
         ja::aabb aabb(std::size_t i, std::size_t j, std::size_t k) const;
         ja::aabb aabb() const;
         glm::vec3 pos(std::size_t i, std::size_t j, std::size_t k) const;
-        std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, face>> test(ja::ray indices) const;
+        //std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, face>> test(ja::ray indices) const;
         using data_type = block[width][height][depth];
         data_type& data();
+        const data_type& data() const;
         data_type m_data{block::grass};
         glm::vec3 m_position;
         ja::mesh m_mesh;
