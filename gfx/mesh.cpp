@@ -46,7 +46,7 @@ namespace ja {
         m_indices.clear();
     }
 
-    void mesh::update_buffers() {
+    void mesh::build() {
         glBindVertexArray(m_vao);
 
         // update the vertices

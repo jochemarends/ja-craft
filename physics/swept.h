@@ -2,8 +2,8 @@
 #define JA_SWEPT_H
 
 #include "aabb.h"
-#include "chunk.h"
-#include "terrain.h"
+#include "../world/chunk.h"
+#include "../world/terrain.h"
 
 namespace ja {
 

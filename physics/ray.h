@@ -2,8 +2,8 @@
 #define JA_RAY
 
 #include "aabb.h"
-#include "chunk.h"
-#include "terrain.h"
+#include "../world/chunk.h"
+#include "../world/terrain.h"
 #include "../util/indices_view.h"
 
 namespace ja {

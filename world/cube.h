@@ -2,7 +2,7 @@
 #define JA_CRAFT_CUBE_H
 
 #include <glad/glad.h>
-#include "mesh.h"
+#include "../gfx/mesh.h"
 
 namespace ja {
     namespace cube {

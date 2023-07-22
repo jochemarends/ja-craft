@@ -1,150 +1,123 @@
 #include "chunk.h"
 #include <algorithm>
 #include <functional>
-#include "mesh.h"
+#include "../gfx/mesh.h"
 #include <iostream>
 #include <ranges>
 
 namespace ja {
+
     chunk::chunk() {
         for (auto [i, j, k] : indices_of(m_data)) {
             if (i == 0 && j == 0 && k == 0) continue;
             m_data[i][j][k] = block::empty;
         }
     }
-}
 
-template<int N>
-auto projection(const std::ranges::input_range auto& range, ja::chunk& chunk, int i, int j, int k) {
-    return std::views::transform(range, [&](auto vertex) {
-        vertex.position += glm::vec3{i, j, k};
-        vertex.texcoord.z = ja::texture_indices[chunk.m_data[i][j][k]][N];
-        return vertex;
-    });
-}
-
-void ja::chunk::generate() {
-    m_mesh.clear();
-
-    for (auto [i, j, k] : indices_view{m_data}) {
-        if (m_data[i][j][k] == block::empty) continue;
-
-        auto move_vertex = [&, this, offset = glm::vec3{i, j, k}](auto vertex) {
-            vertex.position += offset;
-            vertex.texcoord.z = texture_indices[m_data[i][j][k]][0];
-            return vertex;
-        };
-
-
-        // front face
-        m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(projection<0>(front, *this, i, j, k));
-
-        // back face
-        m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(projection<1>(back, *this, i, j, k));
-
-        // left face
-        m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(projection<2>(left, *this, i, j, k));
-
-        // right face
-        m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(projection<3>(right, *this, i, j, k));
-
-        // top face
-        m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(projection<4>(top, *this, i, j, k));
-
-        // bottom face
-        m_mesh.add_indices(indices, m_mesh.vertices().size());
-        m_mesh.add_vertices(projection<5>(bottom, *this, i, j, k));
+    block(&chunk::data())[width][height][depth] {
+        return m_data;
     }
 
-    m_mesh.update_buffers();
-}
+    const block(&chunk::data() const)[width][height][depth] {
+        return m_data;
+    }
 
-auto ja::chunk::data() const -> const data_type& {
-    return m_data;
-}
+    glm::vec3 chunk::pos() const {
+        return glm::vec3{
+            m_id.x * width,
+            m_id.y * height,
+            m_id.z * depth
+        };
+    }
 
-auto ja::chunk::data() -> data_type& {
-    return m_data;
-}
+    glm::vec3 chunk::pos(std::size_t i, std::size_t j, std::size_t k) const {
+        return glm::vec3{i, j, k} + pos();
+    }
 
-//auto ja::chunk::test(ja::ray ray) const -> std::optional<std::pair<tuple_of_n_impl<std::size_t, 3>::type, ja::face>> {
-//    using index_type = tuple_of_n_impl<std::size_t, 3>::type;
-//    using result_type = std::optional<std::pair<index_type, face>>;
-//
-//    result_type min;
-//
-//    auto to_vec3 = [](const auto& tuple) {
-//        auto& [i, j, k] = tuple;
-//        return glm::vec3{i, j, k};
-//    };
-//
-//    auto pred = [&](auto i, auto j, auto k) {
-//        if (!min) return true;
-//        float d1 = glm::distance(ray.origin, pos(i, j, k));
-//        auto [x, y, z] = min->first;
-//        float d2 = glm::distance(ray.origin, pos(x, y, z));
-//        return d1 < d2;
-//    };
-//
-//    for (auto [i, j, k] : indices_view{m_data}) {
-//        if (m_data[i][j][k] == block::empty) continue;
-//
-////        ja::aabb aabb{
-////            .min{-0.5 + i, -0.5 + j, -0.5 + k},
-////            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
-////        };
-//        ja::aabb aabb = this->aabb(i, j, k);
-//        auto hit_face = ja::test(ray, aabb);
-//        if (hit_face && pred(i, j, k)) {
-//            min = std::make_pair(std::make_tuple(i, j, k), *hit_face);
-//        }
-//    }
-//
-//    return min;
-//}
+    ja::aabb chunk::aabb() const {
+        ja::aabb res{
+            .min{-0.5f,                 -0.5f,        -0.5f},
+            .max{ width - 0.5f, height - 0.5f, depth - 0.5f}
+        };
+        res.min += pos();
+        res.max += pos();
+        return res;
+    }
 
-ja::aabb ja::chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
-    ja::aabb res{
-        .min{-0.5 + i, -0.5 + j, -0.5 + k},
-        .max{ 0.5 + i,  0.5 + j,  0.5 + k}
-    };
-    res.min += m_position;
-    res.max += m_position;
-    return res;
-}
+    ja::aabb chunk::aabb(std::size_t i, std::size_t j, std::size_t k) const {
+        ja::aabb res{
+            .min{-0.5 + i, -0.5 + j, -0.5 + k},
+            .max{ 0.5 + i,  0.5 + j,  0.5 + k}
+        };
+        res.min += pos();
+        res.max += pos();
+        return res;
+    }
 
-ja::aabb ja::chunk::aabb() const {
-    ja::aabb res{
-        .min{-0.5f,                 -0.5f,        -0.5f},
-        .max{ width - 0.5f, height - 0.5f, depth - 0.5f}
-    };
-    res.min += m_position;
-    res.max += m_position;
-    return res;
-}
+    void chunk::build_mesh() {
+        m_mesh.clear();
 
-glm::vec3 ja::chunk::pos(std::size_t i, std::size_t j, std::size_t k) const {
-    return glm::vec3{i, j, k} + m_position;
-}
+        for (auto [i, j, k] : indices_of(m_data)) {
+            if (m_data[i][j][k] == block::empty) {
+                continue;
+            }
 
-ja::chunk::iterator::iterator(const chunk& chunk, glm::uvec3 idx) : m_chunk{chunk}, m_idx{idx} {}
+            auto add_face = [&, this](face f) {
+                m_mesh.add_indices(indices, m_mesh.vertices().size());
+                m_mesh.add_vertices(vertices_of.at(f), [&](vertex v) {
+                    v.position += glm::vec3{i, j, k};
+                    ja::block block = m_data[i][j][k];
+                    v.texcoord.z = texture_indices[block][static_cast<int>(f)];
+                    return v;
+                });
+            };
 
-glm::vec3 ja::chunk::iterator::position() const {
-    return m_idx;
-}
+            // front face
+            if (k + 1 < depth && m_data[i][j][k + 1] == ja::block::empty) {
+                add_face(face::front);
+            }
 
-glm::uvec3 ja::chunk::iterator::index() const {
-    return m_idx;
-}
+            // back face
+            if (k - 1 >= 0 && m_data[i][j][k - 1] == ja::block::empty) {
+                add_face(face::back);
+            }
 
-ja::aabb ja::chunk::iterator::aabb() const {
-    return ja::aabb{
-        .min{-0.5 + m_idx.x, -0.5 + m_idx.y, -0.5 + m_idx.z},
-        .max{ 0.5 + m_idx.x,  0.5 + m_idx.y,  0.5 + m_idx.z}
-    };
+            // left face
+            if (i - 1 >= 0 && m_data[i - 1][j][k] == ja::block::empty) {
+                add_face(face::left);
+            }
+
+            // right face
+            if (i + 1 < width && m_data[i + 1][j][k] == ja::block::empty) {
+                add_face(face::right);
+            }
+
+            // top face
+            if (j + 1 < height && m_data[i][j + 1][k] == ja::block::empty) {
+                add_face(face::top);
+            }
+
+            // bottom face
+            if (j - 1 >= 0 && m_data[i][j - 1][k] == ja::block::empty) {
+                add_face(face::bottom);
+            }
+        }
+
+        m_mesh.build();
+    }
+
+    const mesh& chunk::mesh() const {
+        return m_mesh;
+    }
+
+    glm::ivec3 chunk::id() const {
+        return m_id;
+    }
+
+    void chunk::set_id(int i, int j, int k) {
+        m_id.x = i;
+        m_id.y = j;
+        m_id.z = k;
+    }
+
 }

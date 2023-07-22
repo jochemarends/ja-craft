@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <optional>
-#include "mesh.h"
+#include "../gfx/mesh.h"
 
 namespace ja {
 
@@ -16,6 +16,7 @@ namespace ja {
     };
 
     bool test(const ja::aabb& a, const ja::aabb& b);
+    bool test(glm::vec3 a, const ja::aabb& b);
 
 }
 

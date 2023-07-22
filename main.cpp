@@ -1,23 +1,22 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include "gfx/shader.h"
 #include "gfx/program.h"
-#include "world/cube_mesh.h"
+#include "gfx/texture_atlas.h"
+#include "physics/aabb.h"
+#include "physics/ray.h"
+#include "physics/swept.h"
 #include "world/camera.h"
 #include "world/chunk.h"
+#include "world/terrain.h"
+
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "world/ray.h"
 #include <ranges>
-#include "world/swept.h"
-#include "world/aabb.h"
-#include "util/indices_view.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "gfx/texture_atlas.h"
-#include "world/terrain.h"
 
 ja::chunk* pchunk;
 ja::terrain* pterrain;
@@ -150,15 +149,15 @@ void mouse_move_callback(GLFWwindow* window, double x, double y) {
 
 
 void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
-    auto [x, y] = pterrain->pos_to_idx(camera.m_position);
-    ja::chunk& chunk = pterrain->m_chunks[x][y];
+    auto [x, y] = pterrain->pos_to_chunk_id(camera.m_position);
+//    ja::chunk& chunk = pterrain->m_chunks[x][y];
     ja::ray ray{camera.m_position, camera.m_front};
 
     ja::terrain& t = *pterrain;
 
-    auto result =  ja::test(ray, chunk);
-//    auto result = ja::test(ray, *pterrain);
-//    ja::chunk& chunk = result->chunk;
+//    auto result =  ja::test(ray, chunk);
+    auto result = ja::test(ray, *pterrain);
+    ja::chunk& chunk = result->chunk;
     if (!result) return;
     auto [i, j, k] = result->index;
     ja::face face = result->face;
@@ -168,7 +167,7 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
     };
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        int col = chunk.m_data[i][j][k];
+        int col = chunk.data()[i][j][k];
 
         switch (face) {
             case ja::face::front:
@@ -197,7 +196,7 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
         chunk.data()[i][j][k] = ja::empty;
     }
 
-    chunk.generate();
+    chunk.build_mesh();
 }
 
 int main() try {
@@ -273,9 +272,6 @@ int main() try {
     texture_atlas atlas{"resources/textures/atlas.png", 5, 5};
     glUniform1i(program.uniform_location("atlas"), 1);
 
-    ja::chunk chunk;
-    pchunk = &chunk;
-    chunk.generate();
     ja::terrain terrain;
     pterrain = &terrain;
     terrain.center_to(0, 0, 0);
@@ -286,7 +282,13 @@ int main() try {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        terrain.center_to(camera.m_position);
+//        terrain.center_to(camera.m_position);
+
+        static double prev_time = glfwGetTime();
+        double curr_time = glfwGetTime();
+        double delta_time = (curr_time - prev_time) * 1000;
+        prev_time = curr_time;
+        std::cout << "frame time: " << delta_time << '\n';
 
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));

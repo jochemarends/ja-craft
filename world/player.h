@@ -2,7 +2,7 @@
 #define JA_PLAYER_H
 
 #include <glm/glm.hpp>
-#include "aabb.h"
+#include "../physics/aabb.h"
 
 namespace ja {
 

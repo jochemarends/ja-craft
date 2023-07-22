@@ -12,6 +12,13 @@ namespace ja {
                a.max.z >= b.min.z;
     }
 
+    bool test(glm::vec3 a, const ja::aabb& b) {
+        return a.x >= b.min.x &&
+               a.x <= b.max.x &&
+               a.y >= b.min.y &&
+               a.y <= b.max.y;
+    }
+
     float aabb::width() const {
         return std::abs(max.x - min.x);
     }

@@ -31,8 +31,6 @@ namespace ja {
         &T::texcoord;
     };
 
-
-
     class mesh {
     public:
         mesh();
@@ -49,7 +47,7 @@ namespace ja {
         void add_indices(const R& indices, GLuint offset = 0);
 
         void clear();
-        void update_buffers();
+        void build();
         void draw() const;
 
         const std::vector<vertex>& vertices() const;

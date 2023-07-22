@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
-#include "aabb.h"
+#include "../physics/aabb.h"
 
 namespace ja {
     class camera {
@@ -24,7 +24,7 @@ namespace ja {
 
         glm::vec3 m_position;
         glm::vec3 m_front;
-        // position and orientation data
+        // pos and orientation data
         glm::vec3 m_rotation;
         glm::vec3 m_up;
 

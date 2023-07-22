@@ -43,7 +43,9 @@ namespace ja {
             if (chunk.data()[i][j][k] == block::empty) continue;
 
             if (auto hit = test(ray, chunk.aabb(i, j, k))) {
-                auto get_pos = std::bind_front(&chunk::pos, &chunk);
+                auto get_pos = [&chunk](auto ii, auto jj, auto kk) {
+                    return chunk.pos(ii, jj, kk);
+                };
 
                 float d1 = std::numeric_limits<float>::infinity();
                 if (res.has_value()) {
@@ -67,11 +69,15 @@ namespace ja {
         for (auto [i, j] : indices_of(terrain.chunks())) {
             ja::chunk& chunk = (ja::chunk&)terrain.chunks()[i][j];
 
-            if (!test(ray, chunk.aabb())) continue;
+            if (!test(ray, chunk.aabb()) && !test(ray.origin, chunk.aabb())) continue;
 
             if (auto hit = test(ray, chunk)) {
-                auto get_pos_a = std::bind_front(&chunk::pos, res->chunk);
-                auto get_pos_b = std::bind_front(&chunk::pos, &chunk);
+                auto get_pos = [&](const ja::chunk& chunk, auto i, auto j, auto k) {
+                    return chunk.pos(i, j, k);
+                };
+
+                auto get_pos_a = std::bind_front(get_pos, res->chunk);
+                auto get_pos_b = std::bind_front(get_pos, std::ref(chunk));
 
                 float d1 = std::numeric_limits<float>::infinity();
                 if (res.has_value()) {
