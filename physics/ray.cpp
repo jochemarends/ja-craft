@@ -66,9 +66,7 @@ namespace ja {
     std::optional<ray::terrain_hit_info> test(const ray& ray, const terrain& terrain) {
         std::optional<ray::terrain_hit_info> res{};
 
-        for (auto [i, j] : indices_of(terrain.chunks())) {
-            ja::chunk& chunk = (ja::chunk&)terrain.chunks()[i][j];
-
+        for (const ja::chunk& chunk : terrain.chunks()) {
             if (!test(ray, chunk.aabb()) && !test(ray.origin, chunk.aabb())) continue;
 
             if (auto hit = test(ray, chunk)) {
@@ -87,7 +85,7 @@ namespace ja {
                 auto d2 = glm::distance(ray.origin, std::apply(get_pos_b, hit->index));
 
                 if (d2 < d1) {
-                    res = {chunk, hit->index, hit->face};
+                    res = {const_cast<ja::chunk&>(chunk), hit->index, hit->face};
                 }
             }
         }

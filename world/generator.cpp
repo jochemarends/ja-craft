@@ -11,14 +11,6 @@ namespace ja {
 
             }
         }
-        for (auto [i, j, k] : indices_of(chunk.data())) {
-            auto v = chunk.pos(i, j, k) * 0.01f;
-            auto height = m_noise.noise2D_01(v.x, v.z) * chunk::height;
-
-            if (p >= j) {
-                chunk.data()[i][j][k] = (std::abs(p - j) < 0.6) ? block::dirt : block::dirt;
-        }
-        }
     }
 
 }

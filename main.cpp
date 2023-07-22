@@ -149,7 +149,7 @@ void mouse_move_callback(GLFWwindow* window, double x, double y) {
 
 
 void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
-    auto [x, y] = pterrain->pos_to_chunk_id(camera.m_position);
+//    auto [x, y] = pterrain->pos_to_chunk_id(camera.m_position);
 //    ja::chunk& chunk = pterrain->m_chunks[x][y];
     ja::ray ray{camera.m_position, camera.m_front};
 
@@ -274,7 +274,6 @@ int main() try {
 
     ja::terrain terrain;
     pterrain = &terrain;
-    terrain.center_to(0, 0, 0);
 
     camera.m_position.z += 2.0f;
 
