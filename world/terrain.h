@@ -2,6 +2,7 @@
 #define JA_TERRAIN_H
 
 #include "chunk.h"
+#include "flat_terrain_generator.h"
 #include "../gfx/program.h"
 #include <unordered_map>
 
@@ -12,20 +13,25 @@ namespace ja {
 
     class terrain {
     public:
-        static constexpr int range = 4;
+        static constexpr int range = 2;
 
         terrain();
 
         void draw(const ja::program& program) const;
 
-        const std::ranges::view auto chunks() const;
-        std::ranges::view auto chunks();
+        const auto chunks() const {
+            return m_chunks | std::views::values;
+        };
+
+        auto chunks() {
+            return m_chunks | std::views::values;
+        }
 
         glm::ivec3 pos_to_chunk_id(glm::vec3 pos) const;
         const chunk& chunk_at(glm::vec3 pos) const;
         chunk& chunk_at(glm::vec3 pos);
 
-        block block_at(int i, int j, int k) const;
+        block& block_at(int x, int y, int z);
 
         void center_to(const glm::vec3& pos);
     private:
@@ -34,9 +40,8 @@ namespace ja {
 
         glm::ivec3 m_center_chunk_id;
         std::unordered_map<glm::ivec3, chunk> m_chunks{};
+        flat_terrain_generator m_generator;
     };
-
-
 
 }
 

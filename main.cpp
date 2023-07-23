@@ -276,12 +276,18 @@ int main() try {
     pterrain = &terrain;
 
     camera.m_position.z += 2.0f;
+    camera.m_position.y += 1.0f;
+
+    terrain.block_at(-1, 0, 0) = ja::block::glass;
+    for (auto& chunk : terrain.chunks()) {
+        chunk.build_mesh();
+    }
 
     // game loop
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//        terrain.center_to(camera.m_position);
+       // terrain.center_to(camera.m_position);
 
         static double prev_time = glfwGetTime();
         double curr_time = glfwGetTime();

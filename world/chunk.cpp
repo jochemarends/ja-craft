@@ -7,6 +7,10 @@
 
 namespace ja {
 
+    bool is_transparant(block b) {
+        return b == block::empty | b == block::glass;
+    }
+
     chunk::chunk() {
         for (auto [i, j, k] : indices_of(m_data)) {
             if (i == 0 && j == 0 && k == 0) continue;
@@ -73,32 +77,32 @@ namespace ja {
             };
 
             // front face
-            if (k + 1 < depth && m_data[i][j][k + 1] == ja::block::empty) {
+            if (k + 1 < depth && is_transparant(m_data[i][j][k + 1])) {
                 add_face(face::front);
             }
 
             // back face
-            if (k - 1 >= 0 && m_data[i][j][k - 1] == ja::block::empty) {
+            if (k - 1 >= 0 && is_transparant(m_data[i][j][k - 1])) {
                 add_face(face::back);
             }
 
             // left face
-            if (i - 1 >= 0 && m_data[i - 1][j][k] == ja::block::empty) {
+            if (i - 1 >= 0 && is_transparant(m_data[i - 1][j][k])) {
                 add_face(face::left);
             }
 
             // right face
-            if (i + 1 < width && m_data[i + 1][j][k] == ja::block::empty) {
+            if (i + 1 < width && is_transparant(m_data[i + 1][j][k])) {
                 add_face(face::right);
             }
 
             // top face
-            if (j + 1 < height && m_data[i][j + 1][k] == ja::block::empty) {
+            if (j + 1 < height && is_transparant(m_data[i][j + 1][k])) {
                 add_face(face::top);
             }
 
             // bottom face
-            if (j - 1 >= 0 && m_data[i][j - 1][k] == ja::block::empty) {
+            if (j - 1 >= 0 && is_transparant(m_data[i][j - 1][k])) {
                 add_face(face::bottom);
             }
         }

@@ -90,6 +90,8 @@ namespace ja {
         empty
     };
 
+    bool is_transparant(block b);
+
     // front, back, left, right, top, bottom
     inline static std::unordered_map<block, std::array<int, 6>> texture_indices{
         {block::grass, {0, 0, 0, 0, 0, 0}},
