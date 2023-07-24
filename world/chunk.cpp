@@ -79,8 +79,8 @@ namespace ja {
             };
 
             for (ja::face face : faces) {
-                auto v = pos(i, j, k) + normal_of[face];
-                if (auto block = m_terrain.block_at(v.x, v.y, v.z); block && is_transparant(block.value())) {
+                auto adjacent_pos = pos(i, j, k) + normal_of[face];
+                if (auto block = m_terrain.block_at(adjacent_pos); block && is_transparant(block.value())) {
                     add_face(face);
                 }
             }

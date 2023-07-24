@@ -69,6 +69,9 @@ void move(ja::camera& camera, ja::terrain& terrain, glm::vec3 velocity) {
         .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + camera.m_position}
     };
 
+    glm::vec3 a{};
+    glm::ivec3 b{a};
+
     if (auto chunk = terrain.chunk_at(camera.m_position)) {
         move(camera, *chunk, velocity);
     }
@@ -283,7 +286,7 @@ int main() try {
     camera.m_position.z += 2.0f;
     camera.m_position.y += 16.0f;
 
-    terrain.block_at(-1, 0, 0).value() = ja::block::glass;
+    terrain.block_at({-1, 10, 0}).value() = ja::block::glass;
 
     for (auto& chunk : terrain.chunks()) {
         chunk.build_mesh();

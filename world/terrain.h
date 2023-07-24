@@ -34,12 +34,16 @@ namespace ja {
         optional_ref<const chunk> chunk_at(glm::vec3 pos) const;
         optional_ref<chunk> chunk_at(glm::vec3 pos);
 
+        optional_ref<const block> block_at(glm::vec3 pos) const;
+        optional_ref<block> block_at(glm::vec3 pos);
+
         optional_ref<block> block_at(int x, int y, int z);
 
         void center_to(const glm::vec3& pos);
     private:
         glm::ivec3 min_chunk_id() const;
         glm::ivec3 max_chunk_id() const;
+        glm::ivec3 pos_to_chunk_idx(glm::vec3 pos) const;
 
         glm::ivec3 m_center_chunk_id;
         std::unordered_map<glm::ivec3, chunk> m_chunks{};

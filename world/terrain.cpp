@@ -41,6 +41,22 @@ namespace ja {
         return std::nullopt;
     }
 
+    optional_ref<const block> terrain::block_at(glm::vec3 pos) const {
+        if (auto chunk = chunk_at(pos)) {
+            glm::ivec3 idx = pos_to_chunk_idx(pos);
+            return chunk->data()[idx.x][idx.y][idx.z];
+        }
+        return std::nullopt;
+    }
+
+    optional_ref<block> terrain::block_at(glm::vec3 pos) {
+        if (auto chunk = chunk_at(pos)) {
+            glm::ivec3 idx = pos_to_chunk_idx(pos);
+            return chunk->data()[idx.x][idx.y][idx.z];
+        }
+        return std::nullopt;
+    }
+
     glm::ivec3 terrain::min_chunk_id() const {
         return m_center_chunk_id - range;
     }
@@ -49,14 +65,13 @@ namespace ja {
         return m_center_chunk_id + range;
     }
 
-    optional_ref<block> terrain::block_at(int x, int y, int z) {
-        if (auto chunk = chunk_at(glm::vec3{x, y, z})) {
-            int i = ((x % chunk::width) + chunk::width) % chunk::width;
-            int j = ((y % chunk::height) + chunk::height) % chunk::height;
-            int k = ((z % chunk::depth) + chunk::depth) % chunk::depth;
-            return const_cast<block&>(chunk->data()[i][j][k]);
-        }
-        return std::nullopt;
+    glm::ivec3 terrain::pos_to_chunk_idx(glm::vec3 pos) const {
+        // quite expensive
+        return glm::ivec3 {
+            (static_cast<int>(pos.x) % chunk::width + chunk::width) % chunk::width,
+            (static_cast<int>(pos.y) % chunk::height + chunk::height) % chunk::height,
+            (static_cast<int>(pos.z) % chunk::depth + chunk::depth) % chunk::depth
+        };
     }
 
     void terrain::center_to(const glm::vec3& pos) {
