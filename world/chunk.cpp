@@ -4,6 +4,7 @@
 #include "../gfx/mesh.h"
 #include <iostream>
 #include <ranges>
+#include "terrain.h"
 
 namespace ja {
 
@@ -11,7 +12,8 @@ namespace ja {
         return b == block::empty | b == block::glass;
     }
 
-    chunk::chunk() {
+    chunk::chunk(ja::terrain& terrain)
+        :m_terrain{terrain} {
         for (auto [i, j, k] : indices_of(m_data)) {
             if (i == 0 && j == 0 && k == 0) continue;
             m_data[i][j][k] = block::empty;
@@ -76,6 +78,14 @@ namespace ja {
                 });
             };
 
+            for (ja::face face : faces) {
+                auto v = pos(i, j, k) + normal_of[face];
+                if (auto block = m_terrain.block_at(v.x, v.y, v.z); block && is_transparant(block.value())) {
+                    add_face(face);
+                }
+            }
+
+            continue;
             // front face
             if (k + 1 < depth && is_transparant(m_data[i][j][k + 1])) {
                 add_face(face::front);

@@ -22,17 +22,23 @@ namespace ja {
     glm::ivec3 terrain::pos_to_chunk_id(glm::vec3 pos) const {
         return glm::ivec3{
             std::floor(pos.x / chunk::width),
-            std::floor(pos.y / chunk::height),
+            0,
             std::floor(pos.z / chunk::depth)
         };
     }
 
-    const chunk& terrain::chunk_at(glm::vec3 pos) const {
-        return m_chunks.at(pos_to_chunk_id(pos));
+    optional_ref<const chunk> terrain::chunk_at(glm::vec3 pos) const {
+        if (auto it = m_chunks.find(pos_to_chunk_id(pos)); it != m_chunks.end()) {
+            return it->second;
+        }
+        return std::nullopt;
     }
 
-    chunk& terrain::chunk_at(glm::vec3 pos) {
-        return m_chunks[pos_to_chunk_id(pos)];
+    optional_ref<chunk> terrain::chunk_at(glm::vec3 pos) {
+        if (auto it = m_chunks.find(pos_to_chunk_id(pos)); it != m_chunks.end()) {
+            return it->second;
+        }
+        return std::nullopt;
     }
 
     glm::ivec3 terrain::min_chunk_id() const {
@@ -43,13 +49,14 @@ namespace ja {
         return m_center_chunk_id + range;
     }
 
-    block& terrain::block_at(int x, int y, int z) {
-        const ja::chunk& chunk = chunk_at(glm::vec3{x, y, z});
-        int i = ((x % chunk::width) + chunk::width) % chunk::width;
-        int j = ((y % chunk::height) + chunk::height) % chunk::height;
-        int k = ((z % chunk::depth) + chunk::depth) % chunk::depth;
-        std::cerr << k << std::endl;
-        return const_cast<block&>(chunk.data()[i][j][k]);
+    optional_ref<block> terrain::block_at(int x, int y, int z) {
+        if (auto chunk = chunk_at(glm::vec3{x, y, z})) {
+            int i = ((x % chunk::width) + chunk::width) % chunk::width;
+            int j = ((y % chunk::height) + chunk::height) % chunk::height;
+            int k = ((z % chunk::depth) + chunk::depth) % chunk::depth;
+            return const_cast<block&>(chunk->data()[i][j][k]);
+        }
+        return std::nullopt;
     }
 
     void terrain::center_to(const glm::vec3& pos) {
@@ -60,12 +67,15 @@ namespace ja {
         for (int i = min_chunk_id().x; i < max_chunk_id().x; ++i) {
             for (int j = min_chunk_id().z; j < max_chunk_id().z; ++j) {
                 glm::ivec3 id{i, 0, j};
-                m_chunks[id].set_id(i, 0, j);
+
+                if (!m_chunks.contains(id)) {
+                    m_chunks.insert({id, chunk{*this}});
+                    m_chunks.at(id).set_id(i, 0, j);
+                }
             }
         }
 
         for (ja::chunk& chunk : m_chunks | std::views::values) {
-//            chunk.data()[0][0][0] = ja::grass; // for testing
             m_generator.generate(chunk);
             chunk.build_mesh();
         }

@@ -102,13 +102,15 @@ namespace ja {
         {block::flag,  {11, 11, 11, 11, 15, 16}}
     };
 
+    class terrain;
+
     class chunk {
     public:
         static constexpr int width  = 16;
         static constexpr int height = 16;
         static constexpr int depth  = 16;
 
-        chunk();
+        chunk(ja::terrain& terrain);
         void generate();
 
         block(&data())[width][height][depth];
@@ -126,6 +128,7 @@ namespace ja {
         glm::ivec3 id() const;
         void set_id(int i, int j, int k);
     private:
+        terrain& m_terrain;
         block m_data[width][height][depth];
         glm::ivec3 m_id;
         ja::mesh m_mesh;

@@ -69,7 +69,12 @@ void move(ja::camera& camera, ja::terrain& terrain, glm::vec3 velocity) {
         .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + camera.m_position}
     };
 
-    move(camera, terrain.chunk_at(camera.m_position), velocity);
+    if (auto chunk = terrain.chunk_at(camera.m_position)) {
+        move(camera, *chunk, velocity);
+    }
+    else {
+        std::cerr << "FFF";
+    }
 }
 
 void handle_key_input(GLFWwindow* window) {
@@ -276,9 +281,10 @@ int main() try {
     pterrain = &terrain;
 
     camera.m_position.z += 2.0f;
-    camera.m_position.y += 1.0f;
+    camera.m_position.y += 16.0f;
 
-    terrain.block_at(-1, 0, 0) = ja::block::glass;
+    terrain.block_at(-1, 0, 0).value() = ja::block::glass;
+
     for (auto& chunk : terrain.chunks()) {
         chunk.build_mesh();
     }
@@ -293,7 +299,7 @@ int main() try {
         double curr_time = glfwGetTime();
         double delta_time = (curr_time - prev_time) * 1000;
         prev_time = curr_time;
-        std::cout << "frame time: " << delta_time << '\n';
+//        std::cout << "frame time: " << delta_time << '\n';
 
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));

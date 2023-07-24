@@ -8,7 +8,7 @@ include_directories(resources)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(ja_craft main.cpp glad/src/glad.c stb_image.h gfx/shader.cpp gfx/shader.h gfx/program.cpp gfx/program.h world/cube_mesh.h world/chunk.cpp world/chunk.h world/camera.cpp world/camera.h gfx/mesh.h gfx/mesh.cpp physics/aabb.cpp physics/aabb.h world/chunk.cpp world/cube.cpp world/cube.h world/md_array_view.cpp world/md_array_view.h util/indices_view.h world/player.cpp world/player.h gfx/texture_atlas.cpp gfx/texture_atlas.h util/non_copyable.h world/terrain.cpp world/terrain.h physics/swept.h physics/swept.cpp physics/ray.cpp physics/ray.h PerlinNoise.h world/generator.cpp world/generator.h world/flat_terrain_generator.cpp world/block.h)
+add_executable(ja_craft main.cpp glad/src/glad.c stb_image.h gfx/shader.cpp gfx/shader.h gfx/program.cpp gfx/program.h world/cube_mesh.h world/chunk.cpp world/chunk.h world/camera.cpp world/camera.h gfx/mesh.h gfx/mesh.cpp physics/aabb.cpp physics/aabb.h world/chunk.cpp world/cube.cpp world/cube.h world/md_array_view.cpp world/md_array_view.h util/indices_view.h world/player.cpp world/player.h gfx/texture_atlas.cpp gfx/texture_atlas.h util/non_copyable.h world/terrain.cpp world/terrain.h physics/swept.h physics/swept.cpp physics/ray.cpp physics/ray.h PerlinNoise.h world/generator.cpp world/generator.h world/flat_terrain_generator.cpp world/block.h world/terrain_generator.h world/default_terrain_generator.h world/default_terrain_generator.cpp)
 
 find_package(glfw3 REQUIRED NAMES glfw3 glfw)
 find_package(glm REQUIRED)

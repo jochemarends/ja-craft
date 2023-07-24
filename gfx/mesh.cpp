@@ -41,6 +41,14 @@ namespace ja {
         glDeleteBuffers(1, &m_ebo);
     }
 
+    mesh::mesh(mesh&& other) noexcept {
+        std::swap(m_vbo, other.m_vbo);
+        std::swap(m_ebo, other.m_ebo);
+        std::swap(m_vao, other.m_vao);
+        m_vertices = other.m_vertices;
+        m_indices = other.m_indices;
+    }
+
     void mesh::clear() {
         m_vertices.clear();
         m_indices.clear();

@@ -3,7 +3,9 @@
 
 #include "chunk.h"
 #include "flat_terrain_generator.h"
+#include "default_terrain_generator.h"
 #include "../gfx/program.h"
+#include "../util/optional_ref.h"
 #include <unordered_map>
 
 #define GLM_ENABLE_EXERIMENTAL
@@ -28,10 +30,11 @@ namespace ja {
         }
 
         glm::ivec3 pos_to_chunk_id(glm::vec3 pos) const;
-        const chunk& chunk_at(glm::vec3 pos) const;
-        chunk& chunk_at(glm::vec3 pos);
 
-        block& block_at(int x, int y, int z);
+        optional_ref<const chunk> chunk_at(glm::vec3 pos) const;
+        optional_ref<chunk> chunk_at(glm::vec3 pos);
+
+        optional_ref<block> block_at(int x, int y, int z);
 
         void center_to(const glm::vec3& pos);
     private:
@@ -40,7 +43,7 @@ namespace ja {
 
         glm::ivec3 m_center_chunk_id;
         std::unordered_map<glm::ivec3, chunk> m_chunks{};
-        flat_terrain_generator m_generator;
+        default_terrain_generator m_generator;
     };
 
 }

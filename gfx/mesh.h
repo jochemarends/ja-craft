@@ -35,8 +35,12 @@ namespace ja {
     public:
         mesh();
         ~mesh();
+
         mesh(const mesh&) = delete;
         mesh& operator=(const mesh&) = delete;
+
+        mesh(mesh&& other) noexcept;
+        mesh& operator==(mesh&& other) noexcept;
 
         template<std::ranges::input_range R, typename Proj = std::identity>
         requires std::same_as<std::ranges::range_value_t<R>, vertex>
