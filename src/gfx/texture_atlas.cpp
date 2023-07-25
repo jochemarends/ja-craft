@@ -1,5 +1,5 @@
 #include "texture_atlas.h"
-#include "../stb_image.h"
+#include "../../stb_image.h"
 #include <stdexcept>
 #include <vector>
 #include <algorithm>

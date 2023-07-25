@@ -1,13 +1,14 @@
 #include <iostream>
 #include "terrain.h"
 #include "../gfx/program.h"
-#include "../PerlinNoise.h"
+#include "../../PerlinNoise.h"
 #include <ranges>
 
 namespace ja {
 
     terrain::terrain() {
         center_to(glm::ivec3{0, 0, 0});
+        load_chunks();
     }
 
     void terrain::draw(const ja::program& program) const {
@@ -79,12 +80,45 @@ namespace ja {
             return; // terrain is already up to date
         };
 
+        unload_chunks();
+        load_chunks();
+        return;
+
         for (int i = min_chunk_id().x; i < max_chunk_id().x; ++i) {
             for (int j = min_chunk_id().z; j < max_chunk_id().z; ++j) {
                 glm::ivec3 id{i, 0, j};
 
                 if (!m_chunks.contains(id)) {
-                    m_chunks.insert({id, chunk{*this}});
+                    m_chunks.emplace(id, *this);
+                    //m_chunks.insert({id, chunk{*this}});
+                    m_chunks.at(id).set_id(i, 0, j);
+                }
+            }
+        }
+
+        for (ja::chunk& chunk : m_chunks | std::views::values) {
+            m_generator.generate(chunk);
+            chunk.build_mesh();
+        }
+    }
+
+    void terrain::unload_chunks() {
+        ja::aabb aabb{
+            .min = min_chunk_id(),
+            .max = max_chunk_id()
+        };
+
+        std::erase_if(m_chunks, [&aabb](const auto& entry) {
+            return !test(entry.first, aabb);
+        });
+    }
+
+    void terrain::load_chunks() {
+        for (int i = min_chunk_id().x; i < max_chunk_id().x; ++i) {
+            for (int j = min_chunk_id().z; j < max_chunk_id().z; ++j) {
+                glm::ivec3 id{i, 0, j};
+                if (!m_chunks.contains(id)) {
+                    m_chunks.emplace(id, *this);
                     m_chunks.at(id).set_id(i, 0, j);
                 }
             }

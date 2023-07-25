@@ -1,7 +1,7 @@
 #ifndef JA_OPTIONAL_REF_H
 #define JA_OPTIONAL_REF_H
 
-#include <optionaL>
+#include <optional>
 
 namespace ja {
 

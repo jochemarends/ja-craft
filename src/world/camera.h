@@ -2,7 +2,7 @@
 #define JA_CAMERA_H
 
 #include <glm/glm.hpp>
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include "../physics/aabb.h"
 
 namespace ja {

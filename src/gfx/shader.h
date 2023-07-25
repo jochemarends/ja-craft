@@ -1,7 +1,7 @@
 #ifndef JA_SHADER_H
 #define JA_SHADER_H
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include <string_view>
 
 namespace ja {

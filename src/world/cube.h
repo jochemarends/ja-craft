@@ -1,7 +1,7 @@
 #ifndef JA_CRAFT_CUBE_H
 #define JA_CRAFT_CUBE_H
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include "../gfx/mesh.h"
 
 namespace ja {

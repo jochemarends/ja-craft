@@ -1,7 +1,7 @@
 #ifndef JA_TEXTURE_ATLAS_H
 #define JA_TEXTURE_ATLAS_H
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include <glm/glm.hpp>
 #include <string_view>
 #include "../util/non_copyable.h"

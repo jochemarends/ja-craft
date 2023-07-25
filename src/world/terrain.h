@@ -44,6 +44,8 @@ namespace ja {
         glm::ivec3 min_chunk_id() const;
         glm::ivec3 max_chunk_id() const;
         glm::ivec3 pos_to_chunk_idx(glm::vec3 pos) const;
+        void unload_chunks();
+        void load_chunks();
 
         glm::ivec3 m_center_chunk_id;
         std::unordered_map<glm::ivec3, chunk> m_chunks{};

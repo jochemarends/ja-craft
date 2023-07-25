@@ -2,7 +2,7 @@
 #define JA__DEFAULT_TERRAIN_GENERATOR_H
 
 #include "terrain_generator.h"
-#include "../PerlinNoise.h"
+#include "../../ext/PerlinNoise.h"
 
 namespace ja {
 

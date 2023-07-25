@@ -1,7 +1,7 @@
 #ifndef JA_GENERATOR_H
 #define JA_GENERATOR_H
 
-#include "../PerlinNoise.h"
+#include "../../PerlinNoise.h"
 #include "chunk.h"
 
 namespace ja {

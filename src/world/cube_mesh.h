@@ -1,6 +1,6 @@
 #ifndef JA_CUBE_MESH_H
 #define JA_CUBE_MESH_H
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 namespace ja {
 //    const GLfloat vertices[] {

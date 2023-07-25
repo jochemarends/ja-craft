@@ -84,37 +84,6 @@ namespace ja {
                     add_face(face);
                 }
             }
-
-            continue;
-            // front face
-            if (k + 1 < depth && is_transparant(m_data[i][j][k + 1])) {
-                add_face(face::front);
-            }
-
-            // back face
-            if (k - 1 >= 0 && is_transparant(m_data[i][j][k - 1])) {
-                add_face(face::back);
-            }
-
-            // left face
-            if (i - 1 >= 0 && is_transparant(m_data[i - 1][j][k])) {
-                add_face(face::left);
-            }
-
-            // right face
-            if (i + 1 < width && is_transparant(m_data[i + 1][j][k])) {
-                add_face(face::right);
-            }
-
-            // top face
-            if (j + 1 < height && is_transparant(m_data[i][j + 1][k])) {
-                add_face(face::top);
-            }
-
-            // bottom face
-            if (j - 1 >= 0 && is_transparant(m_data[i][j - 1][k])) {
-                add_face(face::bottom);
-            }
         }
 
         m_mesh.build();

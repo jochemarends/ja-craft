@@ -1,7 +1,7 @@
 #ifndef JA_CRAFT_CHUNK_H
 #define JA_CRAFT_CHUNK_H
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include <map>
 #include <glm/gtc/type_ptr.hpp>
 #include "../gfx/mesh.h"

@@ -1,7 +1,7 @@
-#include <glad/glad.h>
+#include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../ext/stb_image.h"
 
 #include "gfx/shader.h"
 #include "gfx/program.h"
@@ -76,7 +76,7 @@ void move(ja::camera& camera, ja::terrain& terrain, glm::vec3 velocity) {
         move(camera, *chunk, velocity);
     }
     else {
-        std::cerr << "FFF";
+        move(camera, terrain.chunks().front(), velocity);
     }
 }
 
@@ -116,7 +116,7 @@ void handle_key_input(GLFWwindow* window) {
         d_position += offset.z * camera.m_front;
         d_position += offset.y * camera.m_up;
 
-        move(camera, *pterrain, d_position);
+        move(camera, *pterrain, d_position * 2.0f);
     }
 }
 
@@ -197,7 +197,14 @@ void mouse_button_cb(GLFWwindow* window, int button, int action, int mods) {
                 --j;
         }
 
-            chunk.data()[i][j][k] = selected_block;
+        auto hit_block_pos = chunk.pos(i, j, k);
+        if (auto block = pterrain->block_at(hit_block_pos)) {
+            block.value() = selected_block;
+        }
+
+        pterrain->chunk_at(hit_block_pos)->build_mesh();
+
+      //  chunk.data()[i][j][k] = selected_block;
     }
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -296,7 +303,7 @@ int main() try {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-       // terrain.center_to(camera.m_position);
+        terrain.center_to(camera.m_position);
 
         static double prev_time = glfwGetTime();
         double curr_time = glfwGetTime();
