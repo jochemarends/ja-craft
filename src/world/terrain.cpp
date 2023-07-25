@@ -3,8 +3,14 @@
 #include "../gfx/program.h"
 #include "../../PerlinNoise.h"
 #include <ranges>
+#include <thread>
 
 namespace ja {
+
+    const ja::block& block_info::value() const {
+        return chunk.get().data()[index.x][index.y][index.z];
+    }
+
 
     terrain::terrain() {
         center_to(glm::ivec3{0, 0, 0});
@@ -22,9 +28,9 @@ namespace ja {
 
     glm::ivec3 terrain::pos_to_chunk_id(glm::vec3 pos) const {
         return glm::ivec3{
-            std::floor(pos.x / chunk::width),
+            std::floor((pos.x + 0.5f) / chunk::width),
             0,
-            std::floor(pos.z / chunk::depth)
+            std::floor((pos.z + 0.5f) / chunk::depth)
         };
     }
 
@@ -58,6 +64,14 @@ namespace ja {
         return std::nullopt;
     }
 
+    std::optional<const block_info> terrain::get_block(glm::vec3 pos) const {
+        if (auto chunk = chunk_at(pos)) {
+            glm::ivec3 idx = pos_to_chunk_idx(pos);
+            return block_info{*chunk, idx};
+        }
+        return std::nullopt;
+    }
+
     glm::ivec3 terrain::min_chunk_id() const {
         return m_center_chunk_id - range;
     }
@@ -69,6 +83,9 @@ namespace ja {
     glm::ivec3 terrain::pos_to_chunk_idx(glm::vec3 pos) const {
         // quite expensive
         return glm::ivec3 {
+//            static_cast<int>(pos.x) & (chunk::width - 1),
+//            static_cast<int>(pos.y) & (chunk::height - 1),
+//            static_cast<int>(pos.z) & (chunk::depth - 1)
             (static_cast<int>(pos.x) % chunk::width + chunk::width) % chunk::width,
             (static_cast<int>(pos.y) % chunk::height + chunk::height) % chunk::height,
             (static_cast<int>(pos.z) % chunk::depth + chunk::depth) % chunk::depth
@@ -76,30 +93,10 @@ namespace ja {
     }
 
     void terrain::center_to(const glm::vec3& pos) {
-        if (m_center_chunk_id == std::exchange(m_center_chunk_id, pos_to_chunk_id(pos))) {
-            return; // terrain is already up to date
+        if (m_center_chunk_id != std::exchange(m_center_chunk_id, pos_to_chunk_id(pos))) {
+            unload_chunks();
+            load_chunks();
         };
-
-        unload_chunks();
-        load_chunks();
-        return;
-
-        for (int i = min_chunk_id().x; i < max_chunk_id().x; ++i) {
-            for (int j = min_chunk_id().z; j < max_chunk_id().z; ++j) {
-                glm::ivec3 id{i, 0, j};
-
-                if (!m_chunks.contains(id)) {
-                    m_chunks.emplace(id, *this);
-                    //m_chunks.insert({id, chunk{*this}});
-                    m_chunks.at(id).set_id(i, 0, j);
-                }
-            }
-        }
-
-        for (ja::chunk& chunk : m_chunks | std::views::values) {
-            m_generator.generate(chunk);
-            chunk.build_mesh();
-        }
     }
 
     void terrain::unload_chunks() {
@@ -114,8 +111,8 @@ namespace ja {
     }
 
     void terrain::load_chunks() {
-        for (int i = min_chunk_id().x; i < max_chunk_id().x; ++i) {
-            for (int j = min_chunk_id().z; j < max_chunk_id().z; ++j) {
+        for (int i = min_chunk_id().x; i <= max_chunk_id().x; ++i) {
+            for (int j = min_chunk_id().z; j <= max_chunk_id().z; ++j) {
                 glm::ivec3 id{i, 0, j};
                 if (!m_chunks.contains(id)) {
                     m_chunks.emplace(id, *this);

@@ -2,6 +2,10 @@
 
 namespace ja {
 
+    bool swept_result::is_hit() const {
+        return time < 1.0f;
+    }
+
     swept_result swept(const ja::aabb& a, const ja::aabb& b, glm::vec3 velocity) {
         glm::vec3 entry, exit;
 
@@ -67,18 +71,58 @@ namespace ja {
         swept_result res{1.0f, {}};
         for (auto [i, j, k] : indices_of(chunk.data())) {
             if (chunk.data()[i][j][k] == ja::block::empty) continue;
+            if (glm::distance(chunk.pos(i, j, k), a.center()) > 2.0f)  continue;
 
             swept_result new_res = swept(a, chunk.aabb(i, j, k), velocity);
 
             if (new_res.time < res.time) {
-                res = new_res;
+                glm::vec adjacent_pos = chunk.pos(i, j, k) + new_res.normal;
+                if (auto block = chunk.m_terrain.block_at(adjacent_pos)) {
+                    if (*block == empty) res = new_res;
+                }
+
             }
         }
         return res;
     }
 
     swept_result swept(const ja::aabb& a, const ja::terrain& terrain , glm::vec3 velocity) {
+        glm::ivec3 step{
+            (velocity.x < 0.0f) ? -1 : 1,
+            (velocity.y < 0.0f) ? -1 : 1,
+            (velocity.z < 0.0f) ? -1 : 1
+        };
 
+        for (const auto& chunk : terrain.chunks()) {
+            swept_result res = swept(a, chunk, velocity);
+            if (res.is_hit()) {
+                return res;
+            }
+        }
+
+        glm::ivec3 pos = a.center();
+        glm::ivec3 min = pos - 3;
+        glm::ivec3 max = pos + 3;
+
+        swept_result res{1.0f, {}};
+        for (int i = min.x; i <= max.x; ++i) {
+            for (int j = min.y; j <= max.y; ++j) {
+                for (int k = min.z; k <= max.z; ++k) {
+                    if (auto block_info = terrain.get_block({i, j, k})) {
+                        if (block_info->value() == empty) continue;
+
+                        auto v= block_info->index;
+
+                        swept_result new_res = swept(a, block_info->chunk.get().aabb(v.x, v.y, v.z), velocity);
+
+                        if (new_res.time < res.time) {
+                            res = new_res;
+                        }
+                    }
+                }
+            }
+        }
+        return res;
     }
 
 }

@@ -8,6 +8,7 @@
 namespace ja {
 
     struct swept_result {
+        bool is_hit() const;
         float time;
         glm::vec3 normal;
     };

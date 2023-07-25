@@ -15,7 +15,8 @@ namespace ja {
                 int height = m_noise.octave2D_01(x * 0.05,  z * 0.05, 2) * chunk::height;
                 double block = m_noise.noise2D_01(x * 0.1, z * 0.1);
                 for (int y{}; y < height; ++y) {
-                    chunk.data()[i][y][j] = block >= 0.5 ? block::grass : block::dirt;
+//                    chunk.data()[i][y][j] = block >= 0.5 ? block::grass : block::dirt;
+                    chunk.data()[i][y][j] = (ja::block)(block * 3);
                 }
             }
         }

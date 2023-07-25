@@ -64,19 +64,48 @@ void move(ja::camera& camera, const ja::chunk& chunk, glm::vec3 velocity) {
 }
 
 void move(ja::camera& camera, ja::terrain& terrain, glm::vec3 velocity) {
+    // 1. check for the nearest collision
+    auto res = ja::swept(camera.aabb(), terrain, velocity);
+
+    // 2. apply velocity
+    camera.m_position += velocity * res.time;
+    camera.m_position += res.normal * 0.001f; // avoid getting stuck between blocks
+
+    if (res.time != 1.0f) {
+        glm::vec3 a = res.normal, slide_velocity{};
+
+        auto remaining_time = 1.0f - res.time;
+        velocity *= remaining_time;
+
+        // 3. calculate the slide velocity
+        std::swap(a.x, a.y);
+        if (a != res.normal) slide_velocity += a * glm::dot(a, velocity);
+        std::swap(a.x, a.y);
+
+        std::swap(a.y, a.z);
+        if (a != res.normal) slide_velocity += a * glm::dot(a, velocity);
+        std::swap(a.y, a.z);
+
+        std::swap(a.x, a.z);
+        if (a != res.normal) slide_velocity += a * glm::dot(a, velocity);
+        std::swap(a.x, a.z);
+
+        // 4. apply slide
+        move(camera, terrain, slide_velocity);
+    }
+        return;
+
     ja::aabb player_aabb{
         .min{glm::vec3{-0.4f, -0.4f, -0.4f} + camera.m_position},
         .max{glm::vec3{ 0.4f,  0.4f,  0.4f} + camera.m_position}
     };
 
-    glm::vec3 a{};
-    glm::ivec3 b{a};
 
     if (auto chunk = terrain.chunk_at(camera.m_position)) {
         move(camera, *chunk, velocity);
     }
     else {
-        move(camera, terrain.chunks().front(), velocity);
+        camera.m_position += velocity;
     }
 }
 

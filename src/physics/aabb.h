@@ -11,6 +11,7 @@ namespace ja {
         float width() const;
         float height() const;
         float depth() const;
+        glm::vec3 center() const;
         glm::vec3 min;
         glm::vec3 max;
     };

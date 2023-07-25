@@ -31,4 +31,12 @@ namespace ja {
         return std::abs(max.z - min.z);
     }
 
+    glm::vec3 aabb::center() const {
+        return glm::vec3{
+            min.x + width()  / 2.0f,
+            min.y + height() / 2.0f,
+            min.z + depth()  / 2.0f
+        };
+    }
+
 }

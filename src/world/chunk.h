@@ -127,8 +127,8 @@ namespace ja {
 
         glm::ivec3 id() const;
         void set_id(int i, int j, int k);
-    private:
         terrain& m_terrain;
+    private:
         block m_data[width][height][depth];
         glm::ivec3 m_id;
         ja::mesh m_mesh;
