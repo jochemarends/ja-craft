@@ -7,9 +7,6 @@
 
 namespace ja {
 
-    const ja::block& block_info::value() const {
-        return chunk.get().data()[index.x][index.y][index.z];
-    }
 
 
     terrain::terrain() {
@@ -64,10 +61,10 @@ namespace ja {
         return std::nullopt;
     }
 
-    std::optional<const block_info> terrain::get_block(glm::vec3 pos) const {
+    std::optional<const block_info<const chunk>> terrain::get_block_info(glm::vec3 pos) const {
         if (auto chunk = chunk_at(pos)) {
             glm::ivec3 idx = pos_to_chunk_idx(pos);
-            return block_info{*chunk, idx};
+            return block_info(*chunk, idx);
         }
         return std::nullopt;
     }
@@ -81,11 +78,8 @@ namespace ja {
     }
 
     glm::ivec3 terrain::pos_to_chunk_idx(glm::vec3 pos) const {
-        // quite expensive
+        // (a % b + b) % b is quite expensive. could use a & (b - 1) when b is a power of two!
         return glm::ivec3 {
-//            static_cast<int>(pos.x) & (chunk::width - 1),
-//            static_cast<int>(pos.y) & (chunk::height - 1),
-//            static_cast<int>(pos.z) & (chunk::depth - 1)
             (static_cast<int>(pos.x) % chunk::width + chunk::width) % chunk::width,
             (static_cast<int>(pos.y) % chunk::height + chunk::height) % chunk::height,
             (static_cast<int>(pos.z) % chunk::depth + chunk::depth) % chunk::depth

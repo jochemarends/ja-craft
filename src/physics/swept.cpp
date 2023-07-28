@@ -77,6 +77,7 @@ namespace ja {
 
             if (new_res.time < res.time) {
                 glm::vec adjacent_pos = chunk.pos(i, j, k) + new_res.normal;
+
                 if (auto block = chunk.m_terrain.block_at(adjacent_pos)) {
                     if (*block == empty) res = new_res;
                 }
@@ -93,13 +94,6 @@ namespace ja {
             (velocity.z < 0.0f) ? -1 : 1
         };
 
-        for (const auto& chunk : terrain.chunks()) {
-            swept_result res = swept(a, chunk, velocity);
-            if (res.is_hit()) {
-                return res;
-            }
-        }
-
         glm::ivec3 pos = a.center();
         glm::ivec3 min = pos - 3;
         glm::ivec3 max = pos + 3;
@@ -108,13 +102,10 @@ namespace ja {
         for (int i = min.x; i <= max.x; ++i) {
             for (int j = min.y; j <= max.y; ++j) {
                 for (int k = min.z; k <= max.z; ++k) {
-                    if (auto block_info = terrain.get_block({i, j, k})) {
+                    if (auto block_info = terrain.get_block_info({i, j, k})) {
                         if (block_info->value() == empty) continue;
 
-                        auto v= block_info->index;
-
-                        swept_result new_res = swept(a, block_info->chunk.get().aabb(v.x, v.y, v.z), velocity);
-
+                        swept_result new_res = swept(a, block_info->aabb(), velocity);
                         if (new_res.time < res.time) {
                             res = new_res;
                         }

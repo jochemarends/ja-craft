@@ -338,7 +338,7 @@ int main() try {
         double curr_time = glfwGetTime();
         double delta_time = (curr_time - prev_time) * 1000;
         prev_time = curr_time;
-//        std::cout << "frame time: " << delta_time << '\n';
+        std::cout << "frame time: " << delta_time << '\n';
 
         handle_key_input(window);
         glUniformMatrix4fv(program.uniform_location("proj"), 1, GL_FALSE, glm::value_ptr(camera.proj()));

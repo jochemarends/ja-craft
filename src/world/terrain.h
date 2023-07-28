@@ -5,6 +5,7 @@
 #include "flat_terrain_generator.h"
 #include "default_terrain_generator.h"
 #include "../gfx/program.h"
+#include "block_info.h"
 #include "../util/optional_ref.h"
 #include <unordered_map>
 
@@ -12,12 +13,6 @@
 #include "glm/gtx/hash.hpp"
 
 namespace ja {
-
-    struct block_info {
-        const ja::block& value() const;
-        std::reference_wrapper<const ja::chunk> chunk;
-        glm::ivec3 index;
-    };
 
     class terrain {
     public:
@@ -44,7 +39,7 @@ namespace ja {
         optional_ref<const block> block_at(glm::vec3 pos) const;
         optional_ref<block> block_at(glm::vec3 pos);
 
-        std::optional<const block_info> get_block(glm::vec3 pos) const;
+        std::optional<const block_info<const chunk>> get_block_info(glm::vec3 pos) const;
 
         optional_ref<block> block_at(int x, int y, int z);
 
