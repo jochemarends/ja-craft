@@ -24,7 +24,7 @@ namespace ja {
 
         glm::vec3 m_position;
         glm::vec3 m_front;
-        // pos and orientation data
+        // block_offset and orientation data
         glm::vec3 m_rotation;
         glm::vec3 m_up;
 

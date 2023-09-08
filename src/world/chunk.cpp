@@ -14,10 +14,15 @@ namespace ja {
 
     chunk::chunk(ja::terrain& terrain)
         :m_terrain{terrain} {
-        for (auto [i, j, k] : indices_of(m_data)) {
-            if (i == 0 && j == 0 && k == 0) continue;
-            m_data[i][j][k] = block::empty;
-        }
+        std::fill_n(&m_data[0][0][0], width * height * depth, block::empty);
+    }
+
+    const ja::terrain& chunk::terrain() const {
+        return m_terrain;
+    }
+
+    ja::terrain& chunk::terrain() {
+        return m_terrain;
     }
 
     block(&chunk::data())[width][height][depth] {
@@ -28,7 +33,7 @@ namespace ja {
         return m_data;
     }
 
-    glm::vec3 chunk::pos() const {
+    glm::vec3 chunk::block_offset() const {
         return glm::vec3{
             m_id.x * width,
             m_id.y * height,
@@ -37,7 +42,7 @@ namespace ja {
     }
 
     glm::vec3 chunk::pos(std::size_t i, std::size_t j, std::size_t k) const {
-        return glm::vec3{i, j, k} + pos();
+        return glm::vec3{i, j, k} + block_offset();
     }
 
     ja::aabb chunk::aabb() const {
@@ -45,8 +50,8 @@ namespace ja {
             .min{-0.5f,                 -0.5f,        -0.5f},
             .max{ width - 0.5f, height - 0.5f, depth - 0.5f}
         };
-        res.min += pos();
-        res.max += pos();
+        res.min += block_offset();
+        res.max += block_offset();
         return res;
     }
 
@@ -55,8 +60,8 @@ namespace ja {
             .min{-0.5 + i, -0.5 + j, -0.5 + k},
             .max{ 0.5 + i,  0.5 + j,  0.5 + k}
         };
-        res.min += pos();
-        res.max += pos();
+        res.min += block_offset();
+        res.max += block_offset();
         return res;
     }
 

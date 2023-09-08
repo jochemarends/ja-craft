@@ -78,7 +78,7 @@ namespace ja {
             if (new_res.time < res.time) {
                 glm::vec adjacent_pos = chunk.pos(i, j, k) + new_res.normal;
 
-                if (auto block = chunk.m_terrain.block_at(adjacent_pos)) {
+                if (auto block = chunk.terrain().block_at(adjacent_pos)) {
                     if (*block == empty) res = new_res;
                 }
 

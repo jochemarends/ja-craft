@@ -113,10 +113,13 @@ namespace ja {
         chunk(ja::terrain& terrain);
         void generate();
 
+        const ja::terrain& terrain() const;
+        ja::terrain& terrain();
+
         block(&data())[width][height][depth];
         const block(&data() const)[width][height][depth];
 
-        glm::vec3 pos() const;
+        glm::vec3 block_offset() const;
         glm::vec3 pos(std::size_t i, std::size_t j, std::size_t k) const;
 
         ja::aabb aabb() const;
@@ -127,12 +130,13 @@ namespace ja {
 
         glm::ivec3 id() const;
         void set_id(int i, int j, int k);
-        terrain& m_terrain;
     private:
+        ja::terrain& m_terrain;
         block m_data[width][height][depth];
         glm::ivec3 m_id;
         ja::mesh m_mesh;
     };
+    
 }
 
 #endif

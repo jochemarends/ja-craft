@@ -7,8 +7,6 @@
 
 namespace ja {
 
-
-
     terrain::terrain() {
         center_to(glm::ivec3{0, 0, 0});
         load_chunks();
@@ -17,7 +15,7 @@ namespace ja {
     void terrain::draw(const ja::program& program) const {
         for (const ja::chunk& chunk : m_chunks | std::views::values) {
             glm::mat4 model{1};
-            model = glm::translate(model, chunk.pos());
+            model = glm::translate(model, chunk.block_offset());
             glUniformMatrix4fv(program.uniform_location("model"), 1, GL_FALSE, glm::value_ptr(model));
             chunk.mesh().draw();
         }
