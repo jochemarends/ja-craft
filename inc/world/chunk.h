@@ -8,7 +8,7 @@
 #define CHUNK_H
 
 namespace ja::chunk {
-    ja::mesh
+    
 }
 
 #endif

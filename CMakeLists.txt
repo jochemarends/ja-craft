@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(ja-craft LANGUAGES C CXX)
 
-set(compile_features cxx_std_20)
+set(compile_features cxx_std_23)
 
 set(compile_options -Werror -Wall -Wextra -pedantic)
 

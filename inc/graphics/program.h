@@ -34,6 +34,7 @@ namespace ja::program {
     handle make(const Ts&... shaders) {
         handle program{glCreateProgram()};
         (glAttachShader(program.get(), shaders.get()), ...);
+        glLinkProgram(program.get());
         return program;
     }
 }

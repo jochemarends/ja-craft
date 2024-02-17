@@ -28,7 +28,8 @@ namespace ja {
          * @param vertices Sequence of vertices.
          * @return A mesh instance.
          *
-         * @note Binds the underlying buffer to GL_ARRAY_BUFFER.
+         * @note Binds the underlying buffer to GL_ARRAY_BUFFER, GL_ELEMENT BUFFER.
+         * Also binds to the underlying vertex array.
          */
         template<std::ranges::contiguous_range R>
         requires std::same_as<std::ranges::range_value_t<R>, vertex>
@@ -46,6 +47,7 @@ namespace ja {
          * @return A mesh instance.
          *
          * @note Binds the underlying buffers to GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER.
+         * Also binds to the underlying vertex array.
          */
         template<std::ranges::contiguous_range R1, std::ranges::contiguous_range R2>
         requires std::same_as<std::ranges::range_value_t<R1>, vertex> &&
@@ -57,13 +59,14 @@ namespace ja {
             return m;
         }
 
-        void reset();
-
-        void push_back();
-
+        /**
+         * Binds the underlying vertex array and buffers.
+         *
+         * Binds the underlying vertex array and (element) array buffers.
+         */
         void bind() const;
     private:
-        mesh() = default;
+        mesh();
 
         /**
          * Loads a sequence of vertices in the buffer.

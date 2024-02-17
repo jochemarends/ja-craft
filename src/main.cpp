@@ -15,6 +15,9 @@
 #include <exception>
 #include <iostream>
 #include <vector>
+#include <string>
+
+using namespace std::literals::string_literals;
 
 int main() try {
     using namespace ja;
@@ -37,14 +40,35 @@ int main() try {
         throw std::runtime_error{"ERROR: failed to load OpenGL"};
     }
 
-    std::vector<vertex> vertices(10);
-    std::vector<GLuint> indices(10);
-    auto mesh = mesh::from(vertices, indices);
+    auto vert = shader::from_file(GL_VERTEX_SHADER, "resources/shaders/simple.vert");
+    if (!shader::good(vert)) {
+        throw std::runtime_error{"simple.vert: "s + shader::what(vert)};
+    }
+
+    auto frag = shader::from_file(GL_FRAGMENT_SHADER, "resources/shaders/simple.frag");
+    if (!shader::good(frag)) {
+        throw std::runtime_error{"simple.frag: "s + shader::what(frag)};
+    }
+
+    auto program = program::make(vert, frag);
+    glUseProgram(program.get());
+
+    vertex vertices[]{
+        {{-0.5f, -0.5f, 0.0}},
+        {{ 0.5f, -0.5f, 0.0}},
+        {{ 0.0f,  0.5f, 0.0}},
+    };
+
+    auto mesh = mesh::from(vertices);
+    mesh.bind();
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     while (!glfwWindowShouldClose(window.get())) {
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         glfwSwapBuffers(window.get());
         glfwPollEvents();
     }
