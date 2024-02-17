@@ -26,9 +26,6 @@ int main() try {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    std::vector<vertex> vertices(10);
-    auto mesh = mesh::from(vertices);
-
     auto window = glfw::window::make(700, 400, "ja-craft");
     if (!window) {
         throw std::runtime_error{"ERROR: failed to create a window"};
@@ -39,6 +36,10 @@ int main() try {
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         throw std::runtime_error{"ERROR: failed to load OpenGL"};
     }
+
+    std::vector<vertex> vertices(10);
+    std::vector<GLuint> indices(10);
+    auto mesh = mesh::from(vertices, indices);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 

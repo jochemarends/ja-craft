@@ -75,8 +75,8 @@ namespace ja {
          */
         template<std::ranges::contiguous_range R>
         requires std::same_as<std::ranges::range_value_t<R>, vertex>
-            void load_vertices(R&& vertices) {
-            auto ptr = std::to_address(std::ranges::begin(vertices));
+        void load_vertices(R&& vertices) {
+            auto ptr = std::ranges::data(vertices);
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo.get());
 
             auto size = std::ranges::size(vertices);
@@ -95,7 +95,7 @@ namespace ja {
         template<std::ranges::contiguous_range R>
         requires std::same_as<std::ranges::range_value_t<R>, GLuint>
         void load_indices(R&& indices) {
-            auto ptr = std::to_address(std::ranges::begin(indices));
+            auto ptr = std::ranges::data(indices);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo.get());
 
             auto size = std::ranges::size(indices);

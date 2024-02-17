@@ -27,3 +27,13 @@ target_compile_features(ja-craft PRIVATE ${compile_features})
 
 target_compile_options(ja-craft PRIVATE ${compile_options})
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug") 
+    target_compile_options(ja-craft PRIVATE -Og -g -fno-omit-frame-pointer)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(ja-craft PRIVATE -O3)
+endif()
+
