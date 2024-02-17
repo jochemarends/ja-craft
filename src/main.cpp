@@ -26,7 +26,8 @@ int main() try {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    std::vector<vertex>(10);
+    std::vector<vertex> vertices(10);
+    auto mesh = mesh::from(vertices);
 
     auto window = glfw::window::make(700, 400, "ja-craft");
     if (!window) {
