@@ -7,7 +7,7 @@ namespace ja {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo.get());
     }
 
-    mesh::mesh() {
+    void mesh::load_attribs() {
         glBindVertexArray(m_vao.get());
         // add the position attribute
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), reinterpret_cast<void*>(offsetof(vertex, m_position)));

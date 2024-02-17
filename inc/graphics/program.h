@@ -9,6 +9,7 @@
 
 #include <utility/handle.h>
 #include <graphics/shader.h>
+#include <iostream>
 
 namespace ja::program {
     /**
@@ -35,6 +36,7 @@ namespace ja::program {
         handle program{glCreateProgram()};
         (glAttachShader(program.get(), shaders.get()), ...);
         glLinkProgram(program.get());
+        (glDetachShader(program.get(), shaders.get()), ...);
         return program;
     }
 }

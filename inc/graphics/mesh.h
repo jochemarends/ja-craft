@@ -56,6 +56,7 @@ namespace ja {
             mesh m{};
             m.load_vertices(vertices);
             m.load_indices(indices);
+            m.load_attribs();
             return m;
         }
 
@@ -66,7 +67,8 @@ namespace ja {
          */
         void bind() const;
     private:
-        mesh();
+        mesh() = default;
+        void load_attribs();
 
         /**
          * Loads a sequence of vertices in the buffer.
