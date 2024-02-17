@@ -7,8 +7,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <utility/handle.h>
 #include <glad/glad.h>
+#include <utility/handle.h>
 #include <string>
 
 namespace ja::shader {

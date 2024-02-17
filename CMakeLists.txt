@@ -16,10 +16,12 @@ add_subdirectory(src/glfw)
 
 target_include_directories(ja-craft PRIVATE inc)
 
-# GLFW
+# GLFW & GLM
 find_package(glfw3 REQUIRED NAMES glfw glfw3)
 
-target_link_libraries(ja-craft PRIVATE glad glfw)
+find_package(glm REQUIRED)
+
+target_link_libraries(ja-craft PRIVATE glad glfw glm::glm)
 
 target_compile_features(ja-craft PRIVATE ${compile_features})
 

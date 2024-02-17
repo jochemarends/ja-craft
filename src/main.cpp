@@ -6,13 +6,15 @@
 
 #include <glad/glad.h>
 #include <glfw/window.h>
-#include <graphics/shader.h>
-#include <graphics/program.h>
-#include <graphics/vertex_array.h>
 #include <graphics/buffer.h>
+#include <graphics/mesh.h>
+#include <graphics/program.h>
+#include <graphics/shader.h>
+#include <graphics/vertex_array.h>
 #include <utility/scope_guard.h>
-#include <iostream>
 #include <exception>
+#include <iostream>
+#include <vector>
 
 int main() try {
     using namespace ja;
@@ -23,6 +25,8 @@ int main() try {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    std::vector<vertex>(10);
 
     auto window = glfw::window::make(700, 400, "ja-craft");
     if (!window) {
