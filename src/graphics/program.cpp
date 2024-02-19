@@ -15,7 +15,7 @@ namespace ja::program {
         auto loc = glGetUniformLocation(program.get(), name);
 
         if (loc == -1) {
-            return std::unexpected(error_code::invalid_name);
+            return std::unexpected(error_code::invalid_uniform_name);
         }
         else if (auto error = glGetError(); error != GL_NO_ERROR) {
             return std::unexpected(error_code::invalid_program);

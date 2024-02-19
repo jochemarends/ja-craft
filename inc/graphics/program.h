@@ -45,7 +45,7 @@ namespace ja::program {
      * Represents shader program related error codes.
      */
     enum class error_code {
-        invalid_name,
+        invalid_uniform_name,
         invalid_program
     };
 
