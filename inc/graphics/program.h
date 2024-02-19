@@ -9,6 +9,7 @@
 
 #include <utility/handle.h>
 #include <graphics/shader.h>
+#include <expected>
 #include <iostream>
 
 namespace ja::program {
@@ -39,6 +40,32 @@ namespace ja::program {
         (glDetachShader(program.get(), shaders.get()), ...);
         return program;
     }
+
+    /** 
+     * Represents shader program related error codes.
+     */
+    enum class error_code {
+        invalid_name,
+        invalid_program
+    };
+
+    /**
+     * Get location of uniform variable.
+     *
+     * @param program The program where the uniform variable is defined in.
+     * @param name The name of the uniform variable.
+     * @return The location of a uniform variable (if present).
+     */
+    std::expected<int, error_code> uniform_location(const handle& program, const char* name);
+
+    /**
+     * Get location of uniform variable.
+     *
+     * @param program The program where the uniform variable is defined in.
+     * @param name The name of the uniform variable.
+     * @return The location of a uniform variable (if present).
+     */
+    std::expected<int, error_code> uniform_location(const handle& program, std::string& name);
 }
 
 #endif
