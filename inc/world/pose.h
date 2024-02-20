@@ -13,7 +13,7 @@ namespace ja {
     /**
      * A 3D pose.
      *
-     * Represent a position and orientation in 3D space.
+     * Represents a position and orientation in 3D space.
      */
     struct pose {
         glm::vec3 position{};
