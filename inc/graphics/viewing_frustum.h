@@ -8,9 +8,12 @@ namespace ja {
      * Represents a viewing frustum.
      */
     struct viewing_frustum {
+        glm::mat4 proj() const;
+        glm::mat4 view() const;
+
         pose pose{}; /**< The frustum's position and orientation. */
         double aspect_ratio{};
-        double fov_rad{}; /**< The field of view expressed in radians. */
+        double fov{}; /**< The field of view expressed in radians. */
         double near{};
         double far{};
     };

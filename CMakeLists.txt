@@ -12,6 +12,8 @@ add_subdirectory(external/glad)
 
 add_subdirectory(src/graphics)
 
+add_subdirectory(src/utility)
+
 add_subdirectory(src/glfw)
 
 target_include_directories(ja-craft PRIVATE inc)
