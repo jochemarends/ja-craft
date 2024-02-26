@@ -12,6 +12,7 @@
 #include <graphics/shader.h>
 #include <graphics/vertex_array.h>
 #include <utility/scope_guard.h>
+#include <graphics/viewing_frustum.h>
 #include <exception>
 #include <iostream>
 #include <vector>
@@ -58,6 +59,7 @@ int main() try {
         {{ 0.5f, -0.5f, 0.0}},
         {{ 0.0f,  0.5f, 0.0}},
     };
+
 
     auto mesh = mesh::from(vertices);
     mesh.bind();

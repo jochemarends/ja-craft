@@ -9,11 +9,15 @@ namespace ja {
      * Represents a viewing frustum.
      */
     struct viewing_frustum : pose {
+        /*
+         * Constructs a projection matrix of the viewing frustum.
+         *
+         * @return A projection matrix of the viewing frustum.
+         */
         glm::mat4 proj() const;
 
-        // pose pose{}; /**< The frustum's position and orientation. */
         double aspect_ratio;
-        angle fov = 0.0_deg; /**< The field of view expressed in radians. */
+        angle fov = 90.0_deg; /**< The field of view expressed in radians. */
         double near{};
         double far{};
     };

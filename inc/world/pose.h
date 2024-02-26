@@ -16,9 +16,16 @@ namespace ja {
      * Represents a position and orientation in 3D space.
      */
     struct pose {
-        glm::vec3 position{};
-        glm::vec3 front{};
-        glm::vec3 up{};
+        /*
+         * Constructs a view matrix for a pose.
+         *
+         * @return The view matrix for the pose.
+         */
+        glm::mat4 view() const;
+
+        glm::vec3 position{0.0f, 0.0f,  0.0f};
+        glm::vec3 front   {0.0f, 0.0f, -1.0f};
+        glm::vec3 up      {0.0f, 1.0f,  0.0f};
     };
 }
 
