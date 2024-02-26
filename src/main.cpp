@@ -61,6 +61,9 @@ int main() try {
     };
 
 
+    [[maybe_unused]] viewing_frustum camera{};
+    camera.aspect_ratio = 700.0 / 400.0;
+
     auto mesh = mesh::from(vertices);
     mesh.bind();
 
