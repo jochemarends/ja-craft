@@ -8,6 +8,14 @@
 #include <numbers>
 
 namespace ja {
+    double angle::degrees() const {
+        return m_radians * (180.0 / std::numbers::pi);
+    }
+
+    double angle::radians() const {
+        return m_radians;
+    }
+
     angle operator""_rad(long double radians) {
         angle res{};
         res.m_radians = radians;
