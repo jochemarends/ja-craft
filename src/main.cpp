@@ -18,8 +18,6 @@
 #include <vector>
 #include <string>
 
-using namespace std::literals::string_literals;
-
 int main() try {
     using namespace ja;
 
