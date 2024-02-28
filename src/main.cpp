@@ -26,11 +26,12 @@ ja::viewing_frustum camera{};
 void on_mouse_move([[maybe_unused]] GLFWwindow* window, double x, double y) {
     using namespace ja;
 
-    constexpr float sensitivity{0.1f};
+    constexpr float sensitivity{0.01f};
     static glm::dvec2 old{x, y};
-    const float pitch = static_cast<float>(old.y - y) * sensitivity;
+    const float pitch   = static_cast<float>(old.y - y) * sensitivity;
     const float heading = static_cast<float>(x - old.x) * sensitivity;
     camera.rotate(angle::from<degrees>(pitch), angle::from<degrees>(heading), angle{});
+
     old = {x, y};
 }
 
@@ -50,6 +51,8 @@ int main() try {
     }
 
     glfwMakeContextCurrent(window.get());
+
+    glfwSetCursorPosCallback(window.get(), on_mouse_move);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         throw std::runtime_error{"ERROR: failed to load OpenGL"};
@@ -75,9 +78,10 @@ int main() try {
     };
 
     camera.aspect_ratio = 700.0 / 400.0;
+    camera.fov = 45.0_deg;
 
     camera.position.z += 3.0f;
-    camera.rotate(0.0_deg, 45.0_deg, 0.0_deg);
+    //camera.rotate(0.0_deg, 45.0_deg, 0.0_deg);
 
     auto mesh = mesh::from(vertices);
     mesh.bind();

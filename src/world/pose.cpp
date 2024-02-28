@@ -20,10 +20,9 @@ namespace ja {
     }
 
     void pose::rotate(angle pitch, angle heading, angle roll) {
-        glm::quat rotation{glm::vec3{pitch.radians(), heading.radians(), roll.radians()}};
-        auto mat{glm::mat3_cast(rotation)};
-        front = mat * front;
-        up = mat * up;
+        glm::quat rotation{glm::vec3{pitch.degrees(), heading.degrees(), roll.degrees()}};
+        front = rotation * front;
+        up = rotation * up;
     }
 }
 

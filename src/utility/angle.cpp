@@ -17,12 +17,12 @@ namespace ja {
 
     template<>
     angle angle::from<angle_unit::degrees>(float value) {
-        const double radians = value * (std::numbers::pi / 180.0);
+        const float radians = value * (std::numbers::pi_v<float> / 180.0f);
         return angle::from<angle_unit::radians>(radians);
     }
 
     float angle::degrees() const {
-        return m_radians * (180.0 / std::numbers::pi);
+        return m_radians * (180.0f / std::numbers::pi_v<float>);
     }
 
     float angle::radians() const {
