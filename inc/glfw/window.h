@@ -11,8 +11,8 @@
 #include <memory>
 
 namespace glfw::window {
-    /*
-     * A fucntor used to free window handles.
+    /**
+     * A functor used to free window handles.
      */
     struct deleter {
         void operator()(GLFWwindow* window);
@@ -20,7 +20,7 @@ namespace glfw::window {
 
     using handle = std::unique_ptr<GLFWwindow, deleter>;
 
-    /*
+    /**
      * Create a GLFW window.
      *
      * @param width Width of the window.
