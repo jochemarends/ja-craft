@@ -23,6 +23,39 @@ using namespace std::literals::string_literals;
 
 ja::viewing_frustum camera{};
 
+void handle_key_input(const glfw::window::handle& window) {
+    static auto prev_time = static_cast<float>(glfwGetTime());
+    const auto curr_time = static_cast<float>(glfwGetTime());
+    const auto delta_time = curr_time - prev_time;
+
+
+    if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window.get(), true);
+    }
+
+    glm::vec3 input{};
+    if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
+        input.z += 1.0f;
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
+        input.x += 1.0f;
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
+        input.z -= 1.0f;
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
+        input.x -= 1.0f;
+    }
+
+    if (glm::length(input) > 0.0f) {
+        input = glm::normalize(input);
+        constexpr float speed = 4.0f;
+        camera.move(input * speed * delta_time);
+    }
+
+    prev_time = curr_time;
+}
+
 void on_mouse_move([[maybe_unused]] GLFWwindow* window, double x, double y) {
     using namespace ja;
 
@@ -87,7 +120,6 @@ int main() try {
     camera.fov = 45.0_deg;
 
     camera.position.z += 3.0f;
-    //camera.rotate(0.0_deg, 45.0_deg, 0.0_deg);
 
     auto mesh = mesh::from(vertices);
     mesh.bind();
@@ -96,6 +128,8 @@ int main() try {
 
     while (!glfwWindowShouldClose(window.get())) {
         glClear(GL_COLOR_BUFFER_BIT);
+
+        handle_key_input(window);
 
         glUniformMatrix4fv(program::uniform_location(program, "proj").value(), 1, GL_FALSE, glm::value_ptr(camera.proj()));
 
