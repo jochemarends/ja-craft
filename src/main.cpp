@@ -4,19 +4,18 @@
  * @date 05-01-2024
  */
 
-#include <glad/glad.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glfw/window.h>
-#include <graphics/buffer.h>
 #include <graphics/mesh.h>
 #include <graphics/program.h>
 #include <graphics/shader.h>
-#include <graphics/vertex_array.h>
-#include <utility/scope_guard.h>
 #include <graphics/viewing_frustum.h>
+#include <utility/scope_guard.h>
+
+#include <glad/glad.h>
+#include <glfw/window.h>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <exception>
 #include <iostream>
-#include <vector>
 #include <string>
 
 using namespace std::literals::string_literals;
@@ -149,7 +148,7 @@ catch (std::exception& e) {
     return EXIT_FAILURE;
 }
 catch (...) {
-    std::cerr << "ERROR: unkown exception\n";
+    std::cerr << "ERROR: unknown exception\n";
     return EXIT_FAILURE;
 }
 

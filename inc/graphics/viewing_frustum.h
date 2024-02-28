@@ -15,7 +15,7 @@ namespace ja {
      * Represents a viewing frustum.
      */
     struct viewing_frustum : pose {
-        /*
+        /**
          * Constructs a projection matrix of the viewing frustum.
          *
          * @return A projection matrix of the viewing frustum.
