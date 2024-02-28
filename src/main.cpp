@@ -35,6 +35,10 @@ void on_mouse_move([[maybe_unused]] GLFWwindow* window, double x, double y) {
     old = {x, y};
 }
 
+void on_framebuffer_size_change([[maybe_unused]] GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
 int main() try {
     using namespace ja;
 
@@ -52,7 +56,9 @@ int main() try {
 
     glfwMakeContextCurrent(window.get());
 
+    glfwSetFramebufferSizeCallback(window.get(), on_framebuffer_size_change);
     glfwSetCursorPosCallback(window.get(), on_mouse_move);
+    glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         throw std::runtime_error{"ERROR: failed to load OpenGL"};
