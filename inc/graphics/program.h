@@ -65,7 +65,7 @@ namespace ja::program {
      * @param name The name of the uniform variable.
      * @return The location of a uniform variable (if present).
      */
-    std::expected<int, error_code> uniform_location(const handle& program, std::string& name);
+    std::expected<int, error_code> uniform_location(const handle& program, const std::string& name);
 }
 
 #endif

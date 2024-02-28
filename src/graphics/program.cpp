@@ -24,7 +24,7 @@ namespace ja::program {
         return loc;
     }
 
-    std::expected<int, error_code> uniform_location(const handle& program, std::string& name) {
+    std::expected<int, error_code> uniform_location(const handle& program, const std::string& name) {
         return uniform_location(program, name.c_str());
     }
 }
