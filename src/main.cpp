@@ -26,10 +26,10 @@ ja::viewing_frustum camera{};
 void on_mouse_move([[maybe_unused]] GLFWwindow* window, double x, double y) {
     using namespace ja;
 
-    constexpr float sensitivity{0.01f};
+    constexpr float sensitivity{0.2f};
     static glm::dvec2 old{x, y};
-    const float pitch   = static_cast<float>(old.y - y) * sensitivity;
-    const float heading = static_cast<float>(x - old.x) * sensitivity;
+    const float pitch   = static_cast<float>(y - old.y) * sensitivity;
+    const float heading = static_cast<float>(old.x - x) * sensitivity;
     camera.rotate(angle::from<degrees>(pitch), angle::from<degrees>(heading), angle{});
 
     old = {x, y};
