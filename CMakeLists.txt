@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 project(ja-craft LANGUAGES C CXX)
 
 set(compile_features cxx_std_23)

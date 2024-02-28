@@ -5,6 +5,7 @@
  */
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <glfw/window.h>
 #include <graphics/buffer.h>
 #include <graphics/mesh.h>
@@ -63,8 +64,7 @@ int main() try {
     viewing_frustum camera{};
     camera.aspect_ratio = 700.0 / 400.0;
 
-    camera.proj();
-    camera.rotate(10.0_deg, 0.0_deg, 0.0_deg);
+    camera.position.z += 3.0f;
 
     auto mesh = mesh::from(vertices);
     mesh.bind();
@@ -73,6 +73,13 @@ int main() try {
 
     while (!glfwWindowShouldClose(window.get())) {
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUniformMatrix4fv(program::uniform_location(program, "proj").value(), 1, GL_FALSE, glm::value_ptr(camera.proj()));
+
+        glUniformMatrix4fv(program::uniform_location(program, "view").value(), 1, GL_FALSE, glm::value_ptr(camera.view()));
+
+        glm::mat4 model{1};
+        glUniformMatrix4fv(program::uniform_location(program, "model").value(), 1, GL_FALSE, glm::value_ptr(model));
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 

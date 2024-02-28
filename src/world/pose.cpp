@@ -9,8 +9,8 @@ namespace ja {
 
     void pose::move(glm::vec3 delta) {
         position += delta.x * glm::normalize(glm::cross(up, front));
-        position += delta.z * front;
         position += delta.y * up;
+        position += delta.z * front;
     }
 
     void pose::rotate(angle pitch, angle heading, angle roll) {
