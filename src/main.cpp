@@ -21,11 +21,17 @@
 
 using namespace std::literals::string_literals;
 
-void on_mouse_move(GLFWwindow* window, double x, double y) {
+ja::viewing_frustum camera{};
+
+void on_mouse_move([[maybe_unused]] GLFWwindow* window, double x, double y) {
+    using namespace ja;
+
     constexpr float sensitivity{0.1f};
-    static glm::dvec3 old{x, y};
+    static glm::dvec2 old{x, y};
     const float pitch = static_cast<float>(old.y - y) * sensitivity;
     const float heading = static_cast<float>(x - old.x) * sensitivity;
+    camera.rotate(angle::from<degrees>(pitch), angle::from<degrees>(heading), angle{});
+    old = {x, y};
 }
 
 int main() try {
@@ -68,7 +74,6 @@ int main() try {
         {{ 0.0f,  0.5f, 0.0}},
     };
 
-    viewing_frustum camera{};
     camera.aspect_ratio = 700.0 / 400.0;
 
     camera.position.z += 3.0f;
