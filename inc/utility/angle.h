@@ -20,16 +20,16 @@ namespace ja {
          *
          * @return Angle in degrees.
          */
-        double degrees() const;
+        float degrees() const;
 
         /**
          * Retrieve angle in radians.
          *
          * @return Angle in radians.
          */
-        double radians() const;
+        float radians() const;
     private:
-        double m_radians{};
+        float m_radians{};
         friend angle operator""_rad(long double);
         friend angle operator""_deg(long double);
     };

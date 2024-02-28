@@ -16,10 +16,10 @@ namespace ja {
          */
         glm::mat4 proj() const;
 
-        double aspect_ratio{};
+        float aspect_ratio{};
         angle fov = 90.0_deg; /**< The field of view expressed in radians. */
-        double near{};
-        double far{};
+        float near{};
+        float far{};
     };
 }
 

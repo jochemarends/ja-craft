@@ -18,6 +18,8 @@
 #include <vector>
 #include <string>
 
+using namespace std::literals::string_literals;
+
 int main() try {
     using namespace ja;
 
@@ -58,9 +60,11 @@ int main() try {
         {{ 0.0f,  0.5f, 0.0}},
     };
 
-
-    [[maybe_unused]] viewing_frustum camera{};
+    viewing_frustum camera{};
     camera.aspect_ratio = 700.0 / 400.0;
+
+    camera.proj();
+    camera.rotate(10.0_deg, 0.0_deg, 0.0_deg);
 
     auto mesh = mesh::from(vertices);
     mesh.bind();

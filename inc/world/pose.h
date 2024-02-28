@@ -7,6 +7,7 @@
 #ifndef POSE_H
 #define POSE_H
 
+#include <utility/angle.h>
 #include <glm/glm.hpp>
 
 namespace ja {
@@ -22,6 +23,22 @@ namespace ja {
          * @return The view matrix for the pose.
          */
         glm::mat4 view() const;
+
+        /*
+         * Moves a pose relative to its current position and orientation.
+         *
+         * @param delta A vector containing the relative offsets.
+         */
+        void move(glm::vec3 delta);
+
+        /*
+         * Rotates a pose relative to its current orientation.
+         *
+         * @param pitch The rotation around the X axis.
+         * @param heading The rotation around the Y axis.
+         * @param roll The rotation around the Z axis.
+         */
+        void rotate(angle pitch, angle heading, angle roll);
 
         glm::vec3 position{0.0f, 0.0f,  0.0f};
         glm::vec3 front   {0.0f, 0.0f, -1.0f};
