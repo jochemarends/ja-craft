@@ -65,6 +65,7 @@ int main() try {
     camera.aspect_ratio = 700.0 / 400.0;
 
     camera.position.z += 3.0f;
+    camera.rotate(0.0_deg, 45.0_deg, 0.0_deg);
 
     auto mesh = mesh::from(vertices);
     mesh.bind();
