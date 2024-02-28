@@ -1,7 +1,15 @@
 # ja-craft
 ### Description
-A simple minecraft-like voxel renderer written in C++20 using OpenGL. The project is far from finished, the source code is a bit messy, and physics work (sometimes). 
-😥
+A small voxel renderer writting in C++ 23 using OpenGL.
+
+## Feature list
+- [x] 3D rendering
+- [ ] Movement
+- [ ] Block placement and removal
+- [ ] Physics
+- [ ] Chunks
+- [ ] World Generation
+- [ ] Saving and loading of worlds
 
 ### Screenshots
 ![img0](images/image0.png)
