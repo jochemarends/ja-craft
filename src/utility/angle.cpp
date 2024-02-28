@@ -8,6 +8,19 @@
 #include <numbers>
 
 namespace ja {
+    template<>
+    angle angle::from<angle_unit::radians>(float value) {
+        angle res{};
+        res.m_radians = value;
+        return res;
+    }
+
+    template<>
+    angle angle::from<angle_unit::degrees>(float value) {
+        const double radians = value * (std::numbers::pi / 180.0);
+        return angle::from<angle_unit::radians>(radians);
+    }
+
     float angle::degrees() const {
         return m_radians * (180.0 / std::numbers::pi);
     }
@@ -16,16 +29,12 @@ namespace ja {
         return m_radians;
     }
 
-    angle operator""_rad(long double radians) {
-        angle res{};
-        res.m_radians = radians;
-        return res;
+    angle operator""_deg(long double degrees) {
+        return angle::from<angle_unit::degrees>(degrees);
     }
 
-    angle operator""_deg(long double degrees) {
-        angle res{};
-        res.m_radians = degrees * (std::numbers::pi / 180.0);
-        return res;
+    angle operator""_rad(long double radians) {
+        return angle::from<angle_unit::radians>(radians);
     }
 }
 

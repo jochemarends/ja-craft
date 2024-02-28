@@ -21,6 +21,13 @@
 
 using namespace std::literals::string_literals;
 
+void on_mouse_move(GLFWwindow* window, double x, double y) {
+    constexpr float sensitivity{0.1f};
+    static glm::dvec3 old{x, y};
+    const float pitch = static_cast<float>(old.y - y) * sensitivity;
+    const float heading = static_cast<float>(x - old.x) * sensitivity;
+}
+
 int main() try {
     using namespace ja;
 

@@ -1,3 +1,9 @@
+/**
+ * @file pose.cpp
+ * @author Jochem Arends
+ * @date 17-02-2024
+ */
+
 #include <world/pose.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>

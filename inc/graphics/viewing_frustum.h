@@ -1,3 +1,9 @@
+/**
+ * @file viewing_frustum.h
+ * @author Jochem Arends
+ * @date 28-02-2024
+ */
+
 #ifndef VIEWING_FRUSTUM_H
 #define VIEWING_FRUSTUM_H
 
