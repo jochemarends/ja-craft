@@ -4,7 +4,7 @@ A small voxel renderer writting in C++ 23 using OpenGL.
 
 ## Feature list
 - [x] 3D rendering
-- [ ] Movement
+- [x] Movement
 - [ ] Block placement and removal
 - [ ] Physics
 - [ ] Chunks
