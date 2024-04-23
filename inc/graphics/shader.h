@@ -37,7 +37,7 @@ namespace ja::shader {
      * @param text Contains the source code of the shader program.
      * @return A shader handle.
      */
-    handle from_text(GLenum type, const std::string_view text);
+    handle from_text(GLenum type, std::string_view text);
 
     /**
      * Checks whether a shader is in valid state.

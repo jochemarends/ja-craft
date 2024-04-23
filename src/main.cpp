@@ -9,13 +9,16 @@
 #include <graphics/shader.h>
 #include <graphics/viewing_frustum.h>
 #include <utility/scope_guard.h>
+#include <world/cube.h>
 
 #include <glad/glad.h>
 #include <glfw/window.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <array>
 #include <exception>
 #include <iostream>
+#include <ranges>
 #include <string>
 
 using namespace std::literals::string_literals;
@@ -115,23 +118,25 @@ int main() try {
         {{ 0.0f,  0.5f, 0.0}},
     };
 
-    camera.aspect_ratio = 700.0 / 400.0;
+    auto [width, height] = glfw::window::size_of(window);
+    camera.aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
     camera.fov = 45.0_deg;
-
     camera.position.z += 3.0f;
 
+
+    //std::vector vec{cube::vertices.begin(), cube::vertices.end()};
     auto mesh = mesh::from(vertices);
     mesh.bind();
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+    // render loop
     while (!glfwWindowShouldClose(window.get())) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         handle_key_input(window);
 
         glUniformMatrix4fv(program::uniform_location(program, "proj").value(), 1, GL_FALSE, glm::value_ptr(camera.proj()));
-
         glUniformMatrix4fv(program::uniform_location(program, "view").value(), 1, GL_FALSE, glm::value_ptr(camera.view()));
 
         glm::mat4 model{1};

@@ -1,3 +1,6 @@
+#ifndef VERTEX_H
+#define VERTEX_H
+
 /**
  * @file mesh.h
  * @author Jochem Arends
@@ -17,3 +20,5 @@ namespace ja {
         glm::vec2 m_texcoord{}; /**< Texture coordinate. */
     };
 }
+
+#endif

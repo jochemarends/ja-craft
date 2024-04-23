@@ -23,7 +23,7 @@ namespace ja::vertex_array {
     /**
      * Creates a vertex array.
      *
-     * @return A vertex array hanlde.
+     * @return A vertex array handle.
      */
     handle make();
 }

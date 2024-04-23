@@ -7,8 +7,8 @@
 #ifndef SCOPE_GUARD_H
 #define SCOPE_GUARD_H
 
-#include <tuple>
 #include <functional>
+#include <tuple>
 
 /**
  * A scope guard that will invoke callables on going out of scope.
@@ -20,7 +20,7 @@ struct scope_guard {
     /**
      * Constructs a scope guard.
      * 
-     * @param args The callables to invoke on going out of scope.
+     * @param args The callables to invoke upon going out of scope.
      */
     scope_guard(Ts... args)
         :m_callables{args...} {}

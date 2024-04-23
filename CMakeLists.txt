@@ -8,7 +8,7 @@ set(compile_features cxx_std_23)
 
 set(compile_options -Werror -Wall -Wextra -pedantic)
 
-add_executable(ja-craft src/main.cpp)
+add_executable(ja-craft src/main.cpp inc/world/cube.h)
 
 add_subdirectory(external/glad)
 

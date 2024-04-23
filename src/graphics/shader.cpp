@@ -19,11 +19,11 @@ namespace ja::shader {
         return from_text(type, text);
     }
 
-    handle from_text(GLenum type, const std::string_view text) {
+    handle from_text(GLenum type, std::string_view text) {
         handle shader{glCreateShader(type)};
 
         const char* data = text.data();
-        int size = text.size();
+        auto size = static_cast<int>(text.size());
 
         glShaderSource(shader.get(), 1, &data, &size);
         glCompileShader(shader.get());

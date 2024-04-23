@@ -14,5 +14,11 @@ namespace glfw::window {
     handle make(int width, int height, const std::string& title) {
         return handle{glfwCreateWindow(width, height, title.c_str(), NULL, NULL)};
     }
+
+    std::array<int, 2> size_of(const handle& window) {
+        std::array<int, 2> size{};
+        glfwGetWindowSize(window.get(), &size[0], &size[1]);
+        return size;
+    }
 }
 

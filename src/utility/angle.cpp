@@ -30,11 +30,11 @@ namespace ja {
     }
 
     angle operator""_deg(long double degrees) {
-        return angle::from<angle_unit::degrees>(degrees);
+        return angle::from<angle_unit::degrees>(static_cast<float>(degrees));
     }
 
     angle operator""_rad(long double radians) {
-        return angle::from<angle_unit::radians>(radians);
+        return angle::from<angle_unit::radians>(static_cast<float>(radians));
     }
 }
 

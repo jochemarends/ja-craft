@@ -7,10 +7,11 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include <utility/handle.h>
-#include <graphics/shader.h>
 #include <expected>
 #include <iostream>
+
+#include <graphics/shader.h>
+#include <utility/handle.h>
 
 namespace ja::program {
     /**
