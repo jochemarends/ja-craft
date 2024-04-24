@@ -112,7 +112,7 @@ int main() try {
     auto program = program::make(vert, frag);
     glUseProgram(program.get());
 
-    vertex vertices[]{
+    [[maybe_unused]] vertex vertices[]{
         {{-0.5f, -0.5f, 0.0}},
         {{ 0.5f, -0.5f, 0.0}},
         {{ 0.0f,  0.5f, 0.0}},
@@ -123,16 +123,26 @@ int main() try {
     camera.fov = 45.0_deg;
     camera.position.z += 3.0f;
 
-
     //std::vector vec{cube::vertices.begin(), cube::vertices.end()};
-    auto mesh = mesh::from(vertices);
+
+    auto a = cube::indices | std::views::common;
+    std::vector<GLuint> indices{a.begin(), a.end()};
+
+    auto b = cube::vertices | std::views::join | std::views::common;
+    std::vector<vertex> verts{b.begin(), b.end()};
+
+    auto mesh = mesh::from(verts, indices);
     mesh.bind();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // render loop
     while (!glfwWindowShouldClose(window.get())) {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         handle_key_input(window);
 
@@ -142,7 +152,8 @@ int main() try {
         glm::mat4 model{1};
         glUniformMatrix4fv(program::uniform_location(program, "model").value(), 1, GL_FALSE, glm::value_ptr(model));
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();

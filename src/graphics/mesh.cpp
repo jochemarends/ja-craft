@@ -17,4 +17,3 @@ namespace ja {
         glEnableVertexAttribArray(1);
     }
 }
-
