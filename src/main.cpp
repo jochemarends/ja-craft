@@ -8,6 +8,7 @@
 #include <graphics/program.h>
 #include <graphics/shader.h>
 #include <graphics/viewing_frustum.h>
+#include <graphics/texture_atlas.h>
 #include <utility/scope_guard.h>
 #include <world/cube.h>
 
@@ -134,7 +135,10 @@ int main() try {
     auto mesh = mesh::from(verts, indices);
     mesh.bind();
 
+    auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
+
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D_ARRAY);
     glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
 
@@ -152,8 +156,7 @@ int main() try {
         glm::mat4 model{1};
         glUniformMatrix4fv(program::uniform_location(program, "model").value(), 1, GL_FALSE, glm::value_ptr(model));
 
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();

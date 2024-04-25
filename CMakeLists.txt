@@ -8,7 +8,7 @@ set(compile_features cxx_std_23)
 
 set(compile_options -Werror -Wall -Wextra -pedantic)
 
-add_executable(ja-craft src/main.cpp inc/world/cube.h)
+add_executable(ja-craft src/main.cpp)
 
 add_subdirectory(external/glad)
 
@@ -20,7 +20,7 @@ add_subdirectory(src/world)
 
 add_subdirectory(src/glfw)
 
-target_include_directories(ja-craft PRIVATE inc)
+target_include_directories(ja-craft PRIVATE inc external)
 
 # GLFW & GLM
 find_package(glfw3 REQUIRED NAMES glfw glfw3)

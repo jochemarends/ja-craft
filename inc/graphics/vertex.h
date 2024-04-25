@@ -17,7 +17,7 @@ namespace ja {
      */
     struct vertex {
         glm::vec3 m_position{}; /**< Point in 3D space. */
-        glm::vec2 m_texcoord{}; /**< Texture coordinate. */
+        glm::vec3 m_texcoord{}; /**< Texture coordinate. */
     };
 }
 
