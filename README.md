@@ -1,6 +1,8 @@
 # ja-craft
 ### Description
-A small voxel renderer writting in C++ 23 using OpenGL.
+A small voxel renderer written in C++ 23 using OpenGL.
+Look in the `rewrite` branch for an improved codebase with fewer implemented features, as listed below.
+I've made this list to establish a clear goal for when I consider this project finished.
 
 ## Feature list
 - [x] 3D rendering
