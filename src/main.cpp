@@ -16,7 +16,6 @@
 #include <glfw/window.h>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <array>
 #include <exception>
 #include <iostream>
 #include <ranges>
@@ -137,6 +136,22 @@ int main() try {
 
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
 
+    auto cube::vertices<cube::face::front>(block::)
+
+    namespace {
+
+    }
+
+    face_vertices {
+
+    };
+
+    cube::face_vertices(cube::face::front, block::grass);
+    cube::face_indices;
+
+    cube::vertices(block::grass);
+    cube::indices;
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D_ARRAY);
     glEnable(GL_CULL_FACE);
@@ -170,4 +185,3 @@ catch (...) {
     std::cerr << "ERROR: unknown exception\n";
     return EXIT_FAILURE;
 }
-
