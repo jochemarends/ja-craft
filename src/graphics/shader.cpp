@@ -1,3 +1,9 @@
+/**
+ * @file handle.cpp
+ * @author Jochem Arends
+ * @date 06-01-2024
+ */
+
 #include <graphics/shader.h>
 #include <fstream>
 #include <iterator>

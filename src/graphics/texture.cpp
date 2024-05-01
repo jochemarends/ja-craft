@@ -1,3 +1,9 @@
+/**
+ * @file texture.cpp
+ * @author Jochem Arends
+ * @date 24-04-2024
+ */
+
 #include <graphics/texture.h>
 
 namespace ja::texture {

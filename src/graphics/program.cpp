@@ -1,3 +1,9 @@
+/**
+ * @file program.cpp
+ * @author Jochem Arends
+ * @date 06-01-2024
+ */
+
 #include <graphics/program.h>
 
 namespace ja::program {

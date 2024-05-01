@@ -1,5 +1,5 @@
 /**
- * @file handle.h
+ * @file shader.h
  * @author Jochem Arends
  * @date 06-01-2024
  */

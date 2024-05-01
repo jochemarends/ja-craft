@@ -1,3 +1,9 @@
+/**
+ * @file mesh.cpp
+ * @author Jochem Arends
+ * @date 17-02-2024
+ */
+
 #include <graphics/mesh.h>
 
 namespace ja {
