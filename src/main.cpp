@@ -136,21 +136,13 @@ int main() try {
 
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
 
-    auto cube::vertices<cube::face::front>(block::)
-
-    namespace {
-
-    }
-
-    face_vertices {
-
-    };
-
-    cube::face_vertices(cube::face::front, block::grass);
-    cube::face_indices;
-
-    cube::vertices(block::grass);
-    cube::indices;
+    // desired interface for making faces or cubes
+    //
+    // cube::face_vertices(cube::face::front, block::grass);
+    // cube::face_indices;
+    //
+    // cube::vertices(block::grass);
+    // cube::indices;
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D_ARRAY);
