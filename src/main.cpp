@@ -136,9 +136,8 @@ int main() try {
 
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
 
-    // desired interface for making faces or cubes
-    //
     cube::face_vertices(cube::face::front, block::grass);
+    // desired interface for making faces or cubes
     // cube::face_indices;
     //
     // cube::vertices(block::grass);
