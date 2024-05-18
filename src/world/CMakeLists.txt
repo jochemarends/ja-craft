@@ -1,2 +1,2 @@
-target_sources(ja-craft PRIVATE pose.cpp)
+target_sources(ja-craft PRIVATE pose.cpp cube.cpp)
 

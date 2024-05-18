@@ -125,24 +125,30 @@ int main() try {
 
     //std::vector vec{cube::vertices.begin(), cube::vertices.end()};
 
-    auto a = cube::indices | std::views::common;
-    std::vector<GLuint> indices{a.begin(), a.end()};
+    // auto a = cube::indices | std::views::common;
+    // std::vector<GLuint> indices{a.begin(), a.end()};
 
-    auto b = cube::vertices | std::views::join | std::views::common;
-    std::vector<vertex> verts{b.begin(), b.end()};
+    //auto b = cube::vertices | std::views::join | std::views::common;
+    //std::vector<vertex> verts{b.begin(), b.end()};
 
-    auto mesh = mesh::from(verts, indices);
-    mesh.bind();
+    // auto mesh = mesh::from(verts, indices);
+    // mesh.bind();
 
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
 
     // desired interface for making faces or cubes
     //
-    // cube::face_vertices(cube::face::front, block::grass);
+    cube::face_vertices(cube::face::front, block::grass);
     // cube::face_indices;
     //
     // cube::vertices(block::grass);
     // cube::indices;
+    //
+    // block_traits::is_transparent(block::grass);
+    // block_traits::texture_index(block::grass);
+    //
+    // block::is_transparent(block::type::grass);
+    // block::texture_index(block::type::grass);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D_ARRAY);
@@ -163,7 +169,7 @@ int main() try {
         glm::mat4 model{1};
         glUniformMatrix4fv(program::uniform_location(program, "model").value(), 1, GL_FALSE, glm::value_ptr(model));
 
-        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
+        // glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
