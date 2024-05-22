@@ -7,10 +7,13 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include <concepts>
+#include <ranges>
+#include <type_traits>
+
 #include <graphics/buffer.h>
 #include <graphics/vertex.h>
 #include <graphics/vertex_array.h>
-#include <ranges>
 
 namespace ja {
     /**
@@ -32,7 +35,7 @@ namespace ja {
          * Also binds to the underlying vertex array.
          */
         template<std::ranges::contiguous_range R>
-        requires std::same_as<std::ranges::range_value_t<R>, vertex>
+        requires std::same_as<std::remove_cvref_t<std::ranges::range_value_t<R>>, vertex>
         static mesh from(R&& vertices) {
             return from(vertices, std::ranges::empty_view<GLuint>{});
         }
@@ -50,8 +53,8 @@ namespace ja {
          * Also binds to the underlying vertex array.
          */
         template<std::ranges::contiguous_range R1, std::ranges::contiguous_range R2>
-        requires std::same_as<std::ranges::range_value_t<R1>, vertex> &&
-                 std::same_as<std::ranges::range_value_t<R2>, GLuint>
+        requires std::same_as<std::remove_cvref_t<std::ranges::range_value_t<R1>>, vertex> &&
+                 std::same_as<std::remove_cvref_t<std::ranges::range_value_t<R2>>, GLuint>
         static mesh from(R1&& vertices, R2&& indices) {
             mesh m{};
             m.load_vertices(vertices);
