@@ -35,7 +35,15 @@ namespace ja::cube {
      * @param b The block the texture should be of.
      * @return A sequence of vertices that represent the face.
      */
-    auto face_vertices(face f, block b);
+    std::span<const vertex, 4> face_vertices(face f);
+
+
+    inline auto face_vertices(face f, block b) {
+        return std::views::transform(face_vertices(f), [b](vertex vert) {
+            vert.m_texcoord.z = static_cast<float>(block_traits::texture_index(b));
+            return vert;
+        });
+    }
 
     inline const std::array<GLuint, 6> face_indices{0, 1, 2, 0, 2, 3};
 
