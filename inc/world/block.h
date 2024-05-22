@@ -19,7 +19,9 @@ namespace ja {
          * @param b The block to obtain the texture index for.
          * @return The texture index.
          */
-        std::size_t texture_index(block b);
+        inline std::size_t texture_index([[maybe_unused]] block b) {
+            return 0uz;
+        }
 
         /**
          * Determines whether a block is transparent.
