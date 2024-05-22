@@ -136,7 +136,10 @@ int main() try {
 
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
 
-    cube::face_vertices(cube::face::front, block::grass);
+    auto verts = cube::face_vertices(cube::face::front, block::grass) | std::ranges::to<std::vector>();
+    auto mesh = mesh::from(verts, cube::face_indices);
+    mesh.bind();
+    
     // desired interface for making faces or cubes
     // cube::face_indices;
     //
@@ -168,7 +171,7 @@ int main() try {
         glm::mat4 model{1};
         glUniformMatrix4fv(program::uniform_location(program, "model").value(), 1, GL_FALSE, glm::value_ptr(model));
 
-        // glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, static_cast<int>(cube::face_indices.size()), GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
