@@ -9,6 +9,7 @@
 
 #include <array>
 #include <ranges>
+#include <functional>
 
 #include <glad/glad.h>
 
@@ -47,19 +48,26 @@ namespace ja::cube {
 
     inline const std::array<GLuint, 6> face_indices{0, 1, 2, 0, 2, 3};
 
+    // TODO: use std::bind_back
+    inline auto cube_vertices(block b) {
+        return faces | std::views::transform([b](face f) { return face_vertices(f, b); })
+                     | std::views::join;
+    }
+
+
 //    std::span<const vertex, face_vertex_count> vertices[]{
 //        face_vertices<face::front>, face_vertices<face::back>,
 //        face_vertices<face::left>, face_vertices<face::right>,
 //        face_vertices<face::top>, face_vertices<face::bottom>,
 //    };
 //
-//    inline auto indices = std::views::repeat(face_indices, std::ranges::size(vertices))
-//                        | std::views::enumerate
-//                        | std::views::transform([](auto tuple) {
-//                              auto [index, range] = tuple;
-//                              return std::views::transform(range, std::bind_front(std::plus{}, index * face_vertex_count));
-//                          })
-//                        | std::views::join;
+    inline auto indices = std::views::repeat(face_indices, 6)
+                        | std::views::enumerate
+                        | std::views::transform([](auto tuple) {
+                              auto [index, range] = tuple;
+                              return std::views::transform(range, std::bind_front(std::plus{}, index * 4));
+                          })
+                        | std::views::join;
 }
 
 #endif
