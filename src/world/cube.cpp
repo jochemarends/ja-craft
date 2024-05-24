@@ -1,7 +1,16 @@
+/**
+ * @file cube.cpp
+ * @author Jochem Arends
+ * @date 24-05-2024
+ */
+
 #include <world/cube.h>
 
 namespace ja::cube {
     namespace {
+        /**
+         * Obtain the vertices of a face.
+         */
         template<face>
         const std::array<vertex, 4> vertices_of;
 
@@ -54,6 +63,12 @@ namespace ja::cube {
         };
     }
 
+    /**
+     * Obtain vertices of a face.
+     *
+     * @param f The face to obtain the vertices of.
+     * @return The vertices that corresponding to the passed face.
+     */
     std::span<const vertex, 4> face_vertices(face f) {
         switch (f) {
             case face::front:
