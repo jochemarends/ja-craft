@@ -95,6 +95,7 @@ int main() try {
     glfwSetFramebufferSizeCallback(window.get(), on_framebuffer_size_change);
     glfwSetCursorPosCallback(window.get(), on_mouse_move);
     glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwFocusWindow(window.get());
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         throw std::runtime_error{"ERROR: failed to load OpenGL"};
