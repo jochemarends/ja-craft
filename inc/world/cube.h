@@ -38,7 +38,6 @@ namespace ja::cube {
      */
     std::span<const vertex, 4> face_vertices(face f);
 
-
     inline auto face_vertices(face f, block b) {
         return std::views::transform(face_vertices(f), [b](vertex vert) {
             vert.m_texcoord.z = static_cast<float>(block_traits::texture_index(b));
@@ -48,19 +47,13 @@ namespace ja::cube {
 
     inline const std::array<GLuint, 6> face_indices{0, 1, 2, 0, 2, 3};
 
-    // TODO: use std::bind_back
-    inline auto cube_vertices(block b) {
-        return faces | std::views::transform([b](face f) { return face_vertices(f, b); })
+    inline auto vertices(block b) {
+        return faces | std::views::transform([b](face f) {
+                            return face_vertices(f, b);
+                       })
                      | std::views::join;
     }
 
-
-//    std::span<const vertex, face_vertex_count> vertices[]{
-//        face_vertices<face::front>, face_vertices<face::back>,
-//        face_vertices<face::left>, face_vertices<face::right>,
-//        face_vertices<face::top>, face_vertices<face::bottom>,
-//    };
-//
     inline auto indices = std::views::repeat(face_indices, 6)
                         | std::views::enumerate
                         | std::views::transform([](auto tuple) {
@@ -71,3 +64,4 @@ namespace ja::cube {
 }
 
 #endif
+

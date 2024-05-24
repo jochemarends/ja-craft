@@ -95,11 +95,12 @@ int main() try {
     glfwSetFramebufferSizeCallback(window.get(), on_framebuffer_size_change);
     glfwSetCursorPosCallback(window.get(), on_mouse_move);
     glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwFocusWindow(window.get());
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         throw std::runtime_error{"ERROR: failed to load OpenGL"};
     }
+
+    glfwFocusWindow(window.get());
 
     auto vert = shader::from_file(GL_VERTEX_SHADER, "resources/shaders/simple.vert");
     if (!shader::good(vert)) {
@@ -125,35 +126,12 @@ int main() try {
     camera.fov = 45.0_deg;
     camera.position.z += 3.0f;
 
-    //std::vector vec{cube::vertices.begin(), cube::vertices.end()};
-
-    // auto a = cube::indices | std::views::common;
-    // std::vector<GLuint> indices{a.begin(), a.end()};
-
-    //auto b = cube::vertices | std::views::join | std::views::common;
-    //std::vector<vertex> verts{b.begin(), b.end()};
-
-    // auto mesh = mesh::from(verts, indices);
-    // mesh.bind();
-
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
 
-    auto verts = cube::cube_vertices(block::grass) | std::ranges::to<std::vector>();
+    auto verts = cube::vertices(block::grass) | std::ranges::to<std::vector>();
     auto mesh = mesh::from(verts, cube::indices | std::ranges::to<std::vector>());
     mesh.bind();
     
-    // desired interface for making faces or cubes
-    // cube::face_indices;
-    //
-    // cube::vertices(block::grass);
-    // cube::indices;
-    //
-    // block_traits::is_transparent(block::grass);
-    // block_traits::texture_index(block::grass);
-    //
-    // block::is_transparent(block::type::grass);
-    // block::texture_index(block::type::grass);
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D_ARRAY);
     glEnable(GL_CULL_FACE);
@@ -173,7 +151,8 @@ int main() try {
         glm::mat4 model{1};
         glUniformMatrix4fv(program::uniform_location(program, "model").value(), 1, GL_FALSE, glm::value_ptr(model));
 
-        glDrawElements(GL_TRIANGLES, static_cast<int>(cube::face_indices.size() * 6), GL_UNSIGNED_INT, nullptr);
+        constexpr int index_count = cube::face_indices.size() * cube::faces.size();
+        glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();

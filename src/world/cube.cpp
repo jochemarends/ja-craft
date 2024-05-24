@@ -3,10 +3,10 @@
 namespace ja::cube {
     namespace {
         template<face>
-        const std::array<vertex, 4> vertices;
+        const std::array<vertex, 4> vertices_of;
 
         template<>
-        const std::array<vertex, 4> vertices<face::front>{
+        const std::array<vertex, 4> vertices_of<face::front>{
             vertex{{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 0.0f}},
             vertex{{-0.5f, 0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}},
             vertex{{0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}},
@@ -14,7 +14,7 @@ namespace ja::cube {
         };
 
         template<>
-        const std::array<vertex, 4> vertices<face::back>{
+        const std::array<vertex, 4> vertices_of<face::back>{
             vertex{{0.5f,  -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
             vertex{{0.5f,  0.5f,  -0.5f}, {1.0f, 1.0f, 0.0f}},
             vertex{{-0.5f, 0.5f,  -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -22,7 +22,7 @@ namespace ja::cube {
         };
 
         template<>
-        const std::array<vertex, 4> vertices<face::left>{
+        const std::array<vertex, 4> vertices_of<face::left>{
             vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.0f}},
             vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
             vertex{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}},
@@ -30,7 +30,7 @@ namespace ja::cube {
         };
 
         template<>
-        const std::array<vertex, 4> vertices<face::right>{
+        const std::array<vertex, 4> vertices_of<face::right>{
             vertex{{0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
             vertex{{0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}},
             vertex{{0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -38,7 +38,7 @@ namespace ja::cube {
         };
 
         template<>
-        const std::array<vertex, 4> vertices<face::top>{
+        const std::array<vertex, 4> vertices_of<face::top>{
             vertex{{-0.5f, 0.5f,  0.5f}, {0.0f, 0.0f, 0.0f}},
             vertex{{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
             vertex{{0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
@@ -46,7 +46,7 @@ namespace ja::cube {
         };
 
         template<>
-        const std::array<vertex, 4> vertices<face::bottom>{
+        const std::array<vertex, 4> vertices_of<face::bottom>{
             vertex{{0.5f,  -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
             vertex{{0.5f,  -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
             vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
@@ -57,18 +57,18 @@ namespace ja::cube {
     std::span<const vertex, 4> face_vertices(face f) {
         switch (f) {
             case face::front:
-                return vertices<face::front>;
+                return vertices_of<face::front>;
             case face::back:
-                return vertices<face::back>;
+                return vertices_of<face::back>;
             case face::left:
-                return vertices<face::left>;
+                return vertices_of<face::left>;
             case face::right:
-                return vertices<face::right>;
+                return vertices_of<face::right>;
             case face::top:
-                return vertices<face::top>;
+                return vertices_of<face::top>;
             case face::bottom:
             default:
-                return vertices<face::bottom>;
+                return vertices_of<face::bottom>;
         }
     }
 }
