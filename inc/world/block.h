@@ -1,3 +1,9 @@
+/**
+ * @file block.h
+ * @author Jochem Arends
+ * @date 25-05-2024
+ */
+
 #ifndef BLOCK_H
 #define BLOCK_H
 
