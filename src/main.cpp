@@ -7,11 +7,11 @@
 #include <graphics/mesh.h>
 #include <graphics/program.h>
 #include <graphics/shader.h>
-#include <graphics/viewing_frustum.h>
 #include <graphics/texture_atlas.h>
+#include <graphics/viewing_frustum.h>
 #include <utility/scope_guard.h>
-#include <world/cube.h>
 #include <world/chunk.h>
+#include <world/cube.h>
 
 #include <glad/glad.h>
 #include <glfw/window.h>
@@ -115,19 +115,12 @@ int main() try {
     auto program = program::make(vert, frag);
     glUseProgram(program.get());
 
-    [[maybe_unused]] vertex vertices[]{
-        {{-0.5f, -0.5f, 0.0}},
-        {{ 0.5f, -0.5f, 0.0}},
-        {{ 0.0f,  0.5f, 0.0}},
-    };
-
     auto [width, height] = glfw::window::size_of(window);
     camera.aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
     camera.fov = 45.0_deg;
     camera.position.z += 3.0f;
 
     auto texture = texture_atlas::from_file("resources/textures/atlas.png", 5, 5);
-
     auto verts = cube::vertices(block::grass) | std::ranges::to<std::vector>();
     auto mesh = mesh::from(verts, cube::indices | std::ranges::to<std::vector>());
     mesh.bind();
