@@ -18,6 +18,21 @@ namespace ja {
         grass,
     };
 
+    struct block_info {
+        std::size_t texture_index{};
+        bool is_transparent{};
+    };
+
+    inline const block_info grass{
+        .texture_index = 1,
+        .is_transparent = false,
+    };
+
+    template<>
+    struct block_info<block::grass> {
+        std::size_t grass_block{
+    }
+
     namespace block_traits {
         /**
          * For obtaining the texture index given a block type.
@@ -27,6 +42,7 @@ namespace ja {
          */
         inline std::size_t texture_index([[maybe_unused]] block b) {
             return 0uz;
+            return 
         }
 
         /**
